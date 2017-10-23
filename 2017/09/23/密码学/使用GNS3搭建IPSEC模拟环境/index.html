@@ -105,7 +105,7 @@
 2. 配置 R112345678R1# configure terminal">
 <meta property="og:image" content="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg">
 <meta property="og:image" content="http://wx4.sinaimg.cn/mw690/4369aa0aly1fjtu1h9w1fj20n509e40m.jpg">
-<meta property="og:updated_time" content="2017-09-23T14:25:03.286Z">
+<meta property="og:updated_time" content="2017-09-23T14:48:29.611Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IPSEC 学习（一）---使用 GNS3 搭建 IPSEC 模拟环境">
 <meta name="twitter:description" content="一. 实验网络的搭建1. 网络拓扑
@@ -391,6 +391,7 @@
 <h6 id="4-配置-R2"><a href="#4-配置-R2" class="headerlink" title="4. 配置 R2"></a>4. 配置 R2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">R2# configure terminal </div><div class="line">R2(config)# interface f0/0 </div><div class="line">R2(config-if)# ip address 192.168.2.1 255.255.255.0 </div><div class="line">R2(config-if)# no shut</div><div class="line">R2(config-if)# interface f0/1</div><div class="line">R2(config-if)# ip address 10.10.1.2 255.255.255.0</div><div class="line">R2(config-if)# no shut</div><div class="line">R2(config-if)# end</div></pre></td></tr></table></figure>
 <h6 id="5-配置静态路由"><a href="#5-配置静态路由" class="headerlink" title="5. 配置静态路由"></a>5. 配置静态路由</h6><p>在 R1 和 R2 上配置静态路由，实现两端子网的互访。<br>配置 R1，下面两条配置任选其一<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">R1(config)# ip route 192.168.2.0 255.255.255.0 10.10.10.2       //最后指定下一路由器 IP</div><div class="line">或者</div><div class="line">R1(config)# ip route 192.168.2.0 255.255.255.0 f0/1         //最后指定送出接口</div></pre></td></tr></table></figure></p>
 <p>配置 R2，下面两条配置任选其一<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">R2(config)# ip route 192.168.1.0 255.255.255.0 10.10.10.1      //最后指定下一路由器 IP</div><div class="line">或者</div><div class="line">R2(config)# ip route 192.168.1.0 255.255.255.0 f0/1         //最后指定送出接口</div></pre></td></tr></table></figure></p>
+<hr>
 <h4 id="三-IPSEC-的配置"><a href="#三-IPSEC-的配置" class="headerlink" title="三. IPSEC 的配置"></a>三. IPSEC 的配置</h4><h6 id="1-R1-的配置"><a href="#1-R1-的配置" class="headerlink" title="1. R1 的配置"></a>1. R1 的配置</h6><p>（1）建立 IKE SA：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">crypto isakmp policy 1          //建立编号为 1 的 IKE 策略</div><div class="line">hash md5</div><div class="line">authentication pre-share</div><div class="line">crypto isakmp key cisco1234 address 10.10.10.2</div></pre></td></tr></table></figure></p>
 <p>（2）建立 IPsec SA：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">crypto ipsec transform-set TEST esp-des esp-sha-hmac            //定义名字为“TEST”的安全算法</div><div class="line">crypto map ABC 10 ipsec-isakmp      //建立名字为 ABC，编号为 10 的 IPSEC 策略，并且会话秘钥由 IKE 动态产生</div><div class="line">set peer 10.10.10.2         //设置隧道终点</div><div class="line">set transform-set TEST</div><div class="line">match address 100       //ACL 100 的流量使用 VPN</div><div class="line">access-list 100 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255</div></pre></td></tr></table></figure></p>
 <p>（3）在接口下调用 IPsec 策略<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">interface f0/1</div><div class="line">crypto map ABC          //接口下调用 IPSEC 策略</div></pre></td></tr></table></figure></p>
@@ -451,6 +452,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/10/23/围棋/星位双枪定式与小目托退定式/" rel="prev" title="星位双枪定式与小目托退定式">
+                星位双枪定式与小目托退定式 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -522,7 +527,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -544,7 +549,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
