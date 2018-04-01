@@ -270,6 +270,158 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2018/04/01/Windows编程/编写exe服务的方法/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tengpapa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://wx1.sinaimg.cn/small/4369aa0aly1fdmtcoiyoij20wt0wt7wh.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="芳华明天">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/04/01/Windows编程/编写exe服务的方法/" itemprop="url">
+                  编写exe服务的方法
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-01T20:30:41+08:00">
+                2018-04-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Windows编程/" itemprop="url" rel="index">
+                    <span itemprop="name">Windows编程</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div></pre></td><td class="code"><pre><div class="line">/*****************************************************************</div><div class="line">* 程序说明：标准的服务编写方法，由 msdn 提供</div><div class="line">*</div><div class="line">* 其它说明：通常一个服务需要 4 个函数：main,ServiceMain,Handler,</div><div class="line">*			Daemon，其中 Daemon 为开发者编写的服务的主体代码。</div><div class="line">*****************************************************************/</div><div class="line"></div><div class="line">#include &lt;windows.h&gt;</div><div class="line">#include &lt;tchar.h&gt;</div><div class="line">#include &lt;strsafe.h&gt;</div><div class="line">//#include &quot;sample.h&quot;</div><div class="line"></div><div class="line">#pragma comment(lib, &quot;advapi32.lib&quot;)</div><div class="line"></div><div class="line">#define SVCNAME TEXT(&quot;SvcName&quot;)</div><div class="line">#define SVC_ERROR  ((DWORD)0xC0020001L)  </div><div class="line"></div><div class="line">SERVICE_STATUS          gSvcStatus; </div><div class="line">SERVICE_STATUS_HANDLE   gSvcStatusHandle; </div><div class="line">HANDLE                  ghSvcStopEvent = NULL;</div><div class="line"></div><div class="line">VOID SvcInstall(void);</div><div class="line">VOID WINAPI SvcCtrlHandler( DWORD ); </div><div class="line">VOID WINAPI SvcMain( DWORD, LPTSTR * ); </div><div class="line"></div><div class="line">VOID ReportSvcStatus( DWORD, DWORD, DWORD );</div><div class="line">VOID SvcInit( DWORD, LPTSTR * ); </div><div class="line">VOID SvcReportEvent( LPTSTR );</div><div class="line"></div><div class="line"></div><div class="line">/*****************************************************</div><div class="line">* 函数功能： 服务代码服务进程的入口点，通常的main函数</div><div class="line">*****************************************************/</div><div class="line">void __cdecl _tmain(int argc, TCHAR *argv[]) </div><div class="line">&#123; </div><div class="line">    // 命令行是&quot;install&quot;，安装该服务；否则，服务被 SCM 启动</div><div class="line">    if( lstrcmpi( argv[1], TEXT(&quot;install&quot;)) == 0 )</div><div class="line">    &#123;</div><div class="line">        SvcInstall();</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 服务程序可以启动多个服务，每个服务都需要填入下列数组中</div><div class="line">    SERVICE_TABLE_ENTRY DispatchTable[] = </div><div class="line">    &#123; </div><div class="line">        &#123; SVCNAME, (LPSERVICE_MAIN_FUNCTION) SvcMain &#125;, </div><div class="line">        &#123; NULL, NULL &#125; </div><div class="line">    &#125;; </div><div class="line"></div><div class="line">    if (!StartServiceCtrlDispatcher( DispatchTable )) </div><div class="line">    &#123; </div><div class="line">        SvcReportEvent(TEXT(&quot;StartServiceCtrlDispatcher&quot;)); </div><div class="line">    &#125; </div><div class="line">&#125; </div><div class="line"></div><div class="line"></div><div class="line">/***************************************************</div><div class="line">* 函数功能： 服务代码在SCM 数据库中安装服务</div><div class="line">*</div><div class="line">* 其它说明： 通常将代码写在另外的程序中，</div><div class="line">*			 例如木马的安装程序。</div><div class="line">***************************************************/</div><div class="line">VOID SvcInstall()</div><div class="line">&#123;</div><div class="line">    SC_HANDLE schSCManager;</div><div class="line">    SC_HANDLE schService;</div><div class="line">    TCHAR szPath[MAX_PATH];</div><div class="line"></div><div class="line">    if( !GetModuleFileName( NULL, szPath, MAX_PATH ) )</div><div class="line">    &#123;</div><div class="line">        printf(&quot;Cannot install service (%d)\n&quot;, GetLastError());</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    schSCManager = OpenSCManager( </div><div class="line">        NULL,                    // local computer</div><div class="line">        NULL,                    // ServicesActive database </div><div class="line">        SC_MANAGER_ALL_ACCESS);  // full access rights </div><div class="line"> </div><div class="line">    if (NULL == schSCManager) </div><div class="line">    &#123;</div><div class="line">        printf(&quot;OpenSCManager failed (%d)\n&quot;, GetLastError());</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	// 创建服务</div><div class="line">    schService = CreateService( </div><div class="line">        schSCManager,              // SCM database </div><div class="line">        SVCNAME,                   // name of service </div><div class="line">        SVCNAME,                   // service name to display </div><div class="line">        SERVICE_ALL_ACCESS,        // desired access </div><div class="line">        SERVICE_WIN32_OWN_PROCESS, // service type </div><div class="line">        SERVICE_DEMAND_START,      // start type </div><div class="line">        SERVICE_ERROR_NORMAL,      // error control type </div><div class="line">        szPath,                    // path to service&apos;s binary </div><div class="line">        NULL,                      // no load ordering group </div><div class="line">        NULL,                      // no tag identifier </div><div class="line">        NULL,                      // no dependencies </div><div class="line">        NULL,                      // LocalSystem account </div><div class="line">        NULL);                     // no password </div><div class="line"> </div><div class="line">    if (schService == NULL) </div><div class="line">    &#123;</div><div class="line">        printf(&quot;CreateService failed (%d)\n&quot;, GetLastError()); </div><div class="line">        CloseServiceHandle(schSCManager);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    else printf(&quot;Service installed successfully\n&quot;); </div><div class="line"></div><div class="line">    CloseServiceHandle(schService); </div><div class="line">    CloseServiceHandle(schSCManager);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/**************************************************</div><div class="line">* 函数功能： 服务代码服务的入口点，即服务的主函数</div><div class="line">**************************************************/</div><div class="line">VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR *lpszArgv )</div><div class="line">&#123;</div><div class="line">	// 注册服务控制处理函数 SvcCtrlHandler</div><div class="line">    gSvcStatusHandle = RegisterServiceCtrlHandler( </div><div class="line">        SVCNAME, </div><div class="line">        SvcCtrlHandler);</div><div class="line"></div><div class="line">    if( !gSvcStatusHandle )</div><div class="line">    &#123; </div><div class="line">        SvcReportEvent(TEXT(&quot;RegisterServiceCtrlHandler&quot;)); </div><div class="line">        return; </div><div class="line">    &#125; </div><div class="line"></div><div class="line">    gSvcStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS; </div><div class="line">    gSvcStatus.dwServiceSpecificExitCode = 0;    </div><div class="line"></div><div class="line">    ReportSvcStatus( SERVICE_START_PENDING, NO_ERROR, 3000 );</div><div class="line"></div><div class="line">    SvcInit( dwArgc, lpszArgv );	//含有个人程序的主要代码</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/*********************************************************</div><div class="line">* 函数功能： 服务代码，初始化的主要工作均放在该函数中</div><div class="line">*</div><div class="line">* 其它说明： SvcMain 调用该函数进行循环，一旦该函数返回，</div><div class="line">*			 也意味着服务的终止。</div><div class="line">**********************************************************/</div><div class="line">VOID SvcInit( DWORD dwArgc, LPTSTR *lpszArgv)</div><div class="line">&#123;</div><div class="line">	// TO_DO: 编写部分初始化的代码</div><div class="line"></div><div class="line">	// 创建事件，控制处理函数 SvcCtrlHandler 在接收到停止</div><div class="line">	// 控制代码时发出此事件的信号</div><div class="line">    ghSvcStopEvent = CreateEvent(</div><div class="line">                         NULL,    // default security attributes</div><div class="line">                         TRUE,    // manual reset event</div><div class="line">                         FALSE,   // not signaled</div><div class="line">                         NULL);   // no name</div><div class="line"></div><div class="line">    if ( ghSvcStopEvent == NULL)</div><div class="line">    &#123;</div><div class="line">        ReportSvcStatus( SERVICE_STOPPED, NO_ERROR, 0 );</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ReportSvcStatus( SERVICE_RUNNING, NO_ERROR, 0 );</div><div class="line"></div><div class="line">    // TO_DO: 在此处写工作代码，一般采用创建线程的方法</div><div class="line">	// ...............................................</div><div class="line"></div><div class="line">    while(1)</div><div class="line">    &#123;</div><div class="line">        WaitForSingleObject(ghSvcStopEvent, INFINITE);</div><div class="line"></div><div class="line">        ReportSvcStatus( SERVICE_STOPPED, NO_ERROR, 0 );</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 设置当前服务状态并将其报告给SCM</div><div class="line">*</div><div class="line">* 参数说明： dwCurrentState		当前状态</div><div class="line">*			 dwWin32ExitCode	系统错误代码</div><div class="line">*			 dwWaitHint			估计待处理操作的时间（毫秒）</div><div class="line">************************************************************/</div><div class="line">VOID ReportSvcStatus( DWORD dwCurrentState,</div><div class="line">                      DWORD dwWin32ExitCode,</div><div class="line">                      DWORD dwWaitHint)</div><div class="line">&#123;</div><div class="line">    static DWORD dwCheckPoint = 1;</div><div class="line"></div><div class="line">    gSvcStatus.dwCurrentState = dwCurrentState;</div><div class="line">    gSvcStatus.dwWin32ExitCode = dwWin32ExitCode;</div><div class="line">    gSvcStatus.dwWaitHint = dwWaitHint;</div><div class="line"></div><div class="line">    if (dwCurrentState == SERVICE_START_PENDING)</div><div class="line">        gSvcStatus.dwControlsAccepted = 0;</div><div class="line">    else gSvcStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;</div><div class="line"></div><div class="line">    if ( (dwCurrentState == SERVICE_RUNNING) ||</div><div class="line">           (dwCurrentState == SERVICE_STOPPED) )</div><div class="line">        gSvcStatus.dwCheckPoint = 0;</div><div class="line">    else gSvcStatus.dwCheckPoint = dwCheckPoint++;</div><div class="line"></div><div class="line">    // 将服务状态报告给 SCM</div><div class="line">    SetServiceStatus( gSvcStatusHandle, &amp;gSvcStatus );</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 服务控制处理器函数</div><div class="line">*</div><div class="line">* 参数说明： dwCtrl		控制码</div><div class="line">************************************************************/</div><div class="line">VOID WINAPI SvcCtrlHandler( DWORD dwCtrl )</div><div class="line">&#123;</div><div class="line">   switch(dwCtrl) </div><div class="line">   &#123;  </div><div class="line">      case SERVICE_CONTROL_STOP: </div><div class="line">         ReportSvcStatus(SERVICE_STOP_PENDING, NO_ERROR, 0);</div><div class="line"></div><div class="line">         SetEvent(ghSvcStopEvent);</div><div class="line">         ReportSvcStatus(gSvcStatus.dwCurrentState, NO_ERROR, 0);</div><div class="line">         </div><div class="line">         return;</div><div class="line"> </div><div class="line">      case SERVICE_CONTROL_INTERROGATE:  //所有服务必须接受并处理该控制代码</div><div class="line">         break; </div><div class="line"> </div><div class="line">      default: </div><div class="line">         break;</div><div class="line">   &#125; </div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 将消息记录到事件日志</div><div class="line">*</div><div class="line">* 参数说明： 失败的函数名</div><div class="line">*</div><div class="line">* 其它说明： 该函数不是必须函数，但通常服务在应用程序事件日志</div><div class="line">*			 中应该有一个条目。</div><div class="line">************************************************************/</div><div class="line">VOID SvcReportEvent(LPTSTR szFunction) </div><div class="line">&#123; </div><div class="line">    HANDLE hEventSource;</div><div class="line">    LPCTSTR lpszStrings[2];</div><div class="line">    TCHAR Buffer[80];</div><div class="line"></div><div class="line">    hEventSource = RegisterEventSource(NULL, SVCNAME);</div><div class="line"></div><div class="line">    if( NULL != hEventSource )</div><div class="line">    &#123;</div><div class="line">        StringCchPrintf(Buffer, 80, TEXT(&quot;%s failed with %d&quot;), szFunction, GetLastError());</div><div class="line"></div><div class="line">        lpszStrings[0] = SVCNAME;</div><div class="line">        lpszStrings[1] = Buffer;</div><div class="line"></div><div class="line">        ReportEvent(hEventSource,        // event log handle</div><div class="line">                    EVENTLOG_ERROR_TYPE, // event type</div><div class="line">                    0,                   // event category</div><div class="line">                    SVC_ERROR,           // event identifier</div><div class="line">                    NULL,                // no security identifier</div><div class="line">                    2,                   // size of lpszStrings array</div><div class="line">                    0,                   // no binary data</div><div class="line">                    lpszStrings,         // array of strings</div><div class="line">                    NULL);               // no binary data</div><div class="line"></div><div class="line">        DeregisterEventSource(hEventSource);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>参考文献：</strong></p>
+<ol>
+<li><p><a href="https://blog.csdn.net/fei_liu/article/details/73395233" target="_blank" rel="external">https://blog.csdn.net/fei_liu/article/details/73395233</a>.</p>
+</li>
+<li><p>《Windows网络程序设计完全讲义》P117，P335.</p>
+</li>
+<li><p>微软的 msdn</p>
+</li>
+</ol>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2017/10/23/围棋/星位双枪定式与小目托退定式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1700,164 +1852,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2017/03/17/C语言的编译器/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tengpapa">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="http://wx1.sinaimg.cn/small/4369aa0aly1fdmtcoiyoij20wt0wt7wh.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="芳华明天">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/17/C语言的编译器/" itemprop="url">
-                  C语言的编译器
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-17T11:25:07+08:00">
-                2017-03-17
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/C/" itemprop="url" rel="index">
-                    <span itemprop="name">C</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>　　在网上搜索一下 C 语言的编译器，会出来很多。但是大部分答案都让人感到莫名其妙。什么 15 大好用的编译器啊，居然还有 Code::Blocks（笔者很喜欢这款）。其实这都是有点概念混淆。Code::Blocks 是一款集成开发环境（IDE，Integrated Development Environment），编译器只是它的一部分。所以你就不能称 Code::Blocks 为编译器。IDE 是用于提供程序开发环境的应用程序，一般包括代码编辑器、编译器、调试器和图形用户界面等工具。集成了代码编写功能、分析功能、编译功能、调试功能等一体化的开发软件服务套。所有具备这一特性的软件或者软件套（组）都可以叫集成开发环境。如微软的 Visual Studio系列，Borland 的 C++ Builder、Delphi 系列以及 Eclipse 等。</p>
-<p>　　下面，我们开始说说编译器。简单讲，编译器就是将“一种语言（通常为高级语言）”翻译为“另一种语言（通常为低级语言）”的程序。一个现代编译器的主要工作流程：源代码 (source code) → 预处理器 (preprocessor) → 编译器 (compiler) → 目标代码 (object code) → 链接器 (Linker) → 可执行程序 (executables)。我们这里谈的编译器是一个广义的概念，不是仅仅指上述流程当中的 compiler，而是把完成上述功能的这样的工具称为编译器。关于编译的详细过程及原理，以后会专门进行讲解。下面给出一张图，让大家有个大概的概念：</p>
-<div align="center"><br><img src="http://wx2.sinaimg.cn/mw690/4369aa0aly1fdpnun4xebj20d60d6aab.jpg" alt="compiler" title="编译过程"><br></div>
-
-<p>　　下面，笔者整理了部分 C 语言的编译器，仅供参考（排名不分先后）：</p>
-<ul>
-<li>Visual C++</li>
-<li>GCC</li>
-<li>MinGW，Cygwin 和 Djgpp</li>
-<li>Turbo C </li>
-<li>Clang</li>
-<li>LCC</li>
-<li>PCC</li>
-<li>TCC</li>
-<li>Pelles C</li>
-</ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1907,7 +1901,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1918,7 +1912,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-count">8</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1929,7 +1923,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-count">23</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -1970,8 +1964,8 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy; 
-  <span itemprop="copyrightYear">2017</span>
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
