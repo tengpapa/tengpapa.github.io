@@ -87,25 +87,25 @@
 
 
 
-<meta name="description" content="重装系统以后，发现’hexo deploy’无法连上GitHub了。查了一下，原来本地存放的GitHub上配置的SSH的公钥和私钥已经不见了。下面就重新配置吧：
+<meta name="description" content="重装系统以后，发现hexo deploy无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：
 
 hexo之前的配置在此就不讲了。
-打开git bash，运行 ‘ssh-keygen -t rsa -C “youremail@example.com”‘ 。运行完以后，会要求你输入密码，可输可不输，如果输入，hexo deploy的时">
+打开 git bash，运行 ssh-keygen -t rsa -C &amp;quot;youremail@example.com&amp;quot; 。运行完以后，会要求你输入密码，可输可不输，如果输入，">
 <meta property="og:type" content="article">
 <meta property="og:title" content="重装系统后，重新配置GitHub上的博客">
 <meta property="og:url" content="http://tengpapa.com/2018/04/01/博客/重装系统后重新配置GitHub/index.html">
 <meta property="og:site_name" content="芳华明天">
-<meta property="og:description" content="重装系统以后，发现’hexo deploy’无法连上GitHub了。查了一下，原来本地存放的GitHub上配置的SSH的公钥和私钥已经不见了。下面就重新配置吧：
+<meta property="og:description" content="重装系统以后，发现hexo deploy无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：
 
 hexo之前的配置在此就不讲了。
-打开git bash，运行 ‘ssh-keygen -t rsa -C “youremail@example.com”‘ 。运行完以后，会要求你输入密码，可输可不输，如果输入，hexo deploy的时">
-<meta property="og:updated_time" content="2018-04-01T14:15:56.696Z">
+打开 git bash，运行 ssh-keygen -t rsa -C &amp;quot;youremail@example.com&amp;quot; 。运行完以后，会要求你输入密码，可输可不输，如果输入，">
+<meta property="og:updated_time" content="2018-04-01T14:25:11.454Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="重装系统后，重新配置GitHub上的博客">
-<meta name="twitter:description" content="重装系统以后，发现’hexo deploy’无法连上GitHub了。查了一下，原来本地存放的GitHub上配置的SSH的公钥和私钥已经不见了。下面就重新配置吧：
+<meta name="twitter:description" content="重装系统以后，发现hexo deploy无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：
 
 hexo之前的配置在此就不讲了。
-打开git bash，运行 ‘ssh-keygen -t rsa -C “youremail@example.com”‘ 。运行完以后，会要求你输入密码，可输可不输，如果输入，hexo deploy的时">
+打开 git bash，运行 ssh-keygen -t rsa -C &amp;quot;youremail@example.com&amp;quot; 。运行完以后，会要求你输入密码，可输可不输，如果输入，">
 
 
 
@@ -372,17 +372,18 @@ hexo之前的配置在此就不讲了。
       
 
       
-        <p>重装系统以后，发现’hexo deploy’无法连上GitHub了。查了一下，原来本地存放的GitHub上配置的SSH的公钥和私钥已经不见了。下面就重新配置吧：</p>
+        <p>重装系统以后，发现<code>hexo deploy</code>无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：</p>
 <ol>
 <li>hexo之前的配置在此就不讲了。</li>
-<li>打开git bash，运行 ‘ssh-keygen -t rsa -C “youremail@example.com”‘ 。运行完以后，会要求你输入密码，可输可不输，如果输入，hexo deploy的时候会要求你输入该密码，该密码的作用应该是将私钥加密进行本地存放。默认的目录下会生成.ssh目录，里面有id_rsa和id_rsa.pub两个文件。</li>
-<li>登陆GitHub，打开「Settings」-&gt;「SSH and GPG keys」，然后点击「new SSH key」，填上任意Title，在Key文本框里粘贴公钥id_rsa.pub文件的内容，最后点击「Add SSH Key」，就可以看到已经添加的Key。至此，在GitHub网站上的设置已经完成了。</li>
-<li>运行’git config –global user.email “you@example.com”‘，’git config –global user.name “Your Name”‘。</li>
+<li>打开 git bash，运行 <code>ssh-keygen -t rsa -C &quot;youremail@example.com&quot;</code> 。运行完以后，会要求你输入密码，可输可不输，如果输入，<code>hexo deploy</code>的时候会要求你输入该密码，该密码的作用应该是将私钥加密进行本地存放。默认的目录下会生成.ssh目录，里面有 id_rsa 和 id_rsa.pub 两个文件。</li>
+<li>登陆 GitHub，打开「Settings」-&gt;「SSH and GPG keys」，然后点击「new SSH key」，填上任意 Title，在 Key 文本框里粘贴公钥 id_rsa.pub 文件的内容，最后点击「Add SSH Key」，就可以看到已经添加的 Key。至此，在 GitHub 网站上的设置已经完成了。</li>
+<li>运行<code>git config --global user.email &quot;you@example.com&quot;</code>，<code>git config --global user.name &quot;Your Name&quot;</code>。</li>
 <li>然后就可以发布网站了。</li>
 </ol>
 <p><strong>参考文献：</strong></p>
 <ol>
-<li><a href="https://www.zhihu.com/question/21193762。" target="_blank" rel="external">https://www.zhihu.com/question/21193762。</a></li>
+<li><a href="https://www.zhihu.com/question/21193762" target="_blank" rel="external">https://www.zhihu.com/question/21193762</a></li>
+<li><a href="http://lowrank.science/Hexo-Migration/" target="_blank" rel="external">http://lowrank.science/Hexo-Migration/</a></li>
 </ol>
 
       
