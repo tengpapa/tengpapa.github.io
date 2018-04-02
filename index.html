@@ -369,14 +369,12 @@
       
         
           
-            <p>###认识 svchost</p>
-<p>Svchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。</p>
+            <h4 id="认识-svchost"><a href="#认识-svchost" class="headerlink" title="认识 svchost"></a>认识 svchost</h4><p>Svchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。</p>
 <p>svchost.exe 可以几个同时存在，windows 2000 一般有 2 个 svchost 进程，一个是 RPCSS（Remote Procedure Call）服务进程，另外一个则是由很多服务共享的一个 svchost.exe。而在 windows XP 中，则一般有 4 个以上的 svchost.exe 服务进程，在 XP 之后的系统中则更多（WIN7 一般是 6 个，但所有系统中数目都不是绝对的，有时候多一点少一点也是正常现象），可以看出把更多的系统内置服务以共享进程方式由 svchost 启动是微软的一个趋势。这样做在一定程度上减少了系统资源的消耗，不过也带来一定的不稳定因素，因为任何一个共享进程的服务因为错误退出进程就会导致整个进程中的所有服务都退出。该进程无法用任务管理器终止，如果用工具强制终止会立刻得到提示并自动关机。</p>
 <p>为了给大家一个感性的认识，我们以<code>Remote Procedure Call(RPC)</code>服务为例，查看该服务的属性，可看到该服务的可执行文件路径为<code>“c:\windows\system32\svchost.exe -k rpcss -p”</code>（这是个 Win10 下的）。</p>
 <div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fpyq3bqe8fj20d40aj0ss.jpg" alt="tuopu"><br></div>
 
-<p>###Svchost 原理</p>
-
+<h4 id="Svchost-原理"><a href="#Svchost-原理" class="headerlink" title="Svchost 原理"></a>Svchost 原理</h4>
           
         
       
