@@ -87,23 +87,20 @@
 
 
 
-<meta name="description" content="[TOC]
-0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
-&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：">
+<meta name="description" content="0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
+&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：SSH1 和">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SSH 详细解析">
 <meta property="og:url" content="http://tengpapa.com/2018/07/01/Linux/SSH资料整理/index.html">
 <meta property="og:site_name" content="芳华明天">
-<meta property="og:description" content="[TOC]
-0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
-&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：">
+<meta property="og:description" content="0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
+&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：SSH1 和">
 <meta property="og:image" content="http://wx2.sinaimg.cn/mw690/4369aa0aly1fsuj5pew04j20o30qn0ty.jpg">
-<meta property="og:updated_time" content="2018-07-01T10:39:22.481Z">
+<meta property="og:updated_time" content="2018-07-01T11:01:53.574Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="SSH 详细解析">
-<meta name="twitter:description" content="[TOC]
-0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
-&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：">
+<meta name="twitter:description" content="0x01 SSH 简介&amp;emsp;&amp;emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。
+&amp;emsp;&amp;emsp;SSH 协议目前有两个版本：SSH1 和">
 <meta name="twitter:image" content="http://wx2.sinaimg.cn/mw690/4369aa0aly1fsuj5pew04j20o30qn0ty.jpg">
 
 
@@ -336,8 +333,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/协议-信息安全/" itemprop="url" rel="index">
-                    <span itemprop="name">协议,信息安全</span>
+                  <a href="/categories/协议/" itemprop="url" rel="index">
+                    <span itemprop="name">协议</span>
                   </a>
                 </span>
 
@@ -371,8 +368,7 @@
       
 
       
-        <p>[TOC]</p>
-<h3 id="0x01-SSH-简介"><a href="#0x01-SSH-简介" class="headerlink" title="0x01 SSH 简介"></a>0x01 SSH 简介</h3><p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
+        <h3 id="0x01-SSH-简介"><a href="#0x01-SSH-简介" class="headerlink" title="0x01 SSH 简介"></a>0x01 SSH 简介</h3><p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
 <p>&emsp;&emsp;SSH 协议目前有两个版本：SSH1 和 SSH2，SSH2 的安全性远高于 SSH1。</p>
 <p>&emsp;&emsp;实现 SSH 协议的服务端软件主要有：OpenSSH 和 SSH Communications，前者为免费开源软件，为主流 SSH 软件，后者为商用软件。</p>
 <p>&emsp;&emsp;支持 SSH 协议的客户端软件则较多，常用主要有：Lunix 下的 ssh 命令、Putty、secureCRT、Xshell、Bitvise SSH Client 等。</p>
