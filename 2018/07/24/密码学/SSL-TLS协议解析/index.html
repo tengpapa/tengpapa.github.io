@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Svchost,服务,编程," />
+  <meta name="keywords" content="协议,信息安全,SSL,TLS," />
 
 
 
@@ -87,21 +87,27 @@
 
 
 
-<meta name="description" content="认识 svchostSvchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。
-svchost.exe 可以几个同时存在，">
+<meta name="description" content="&amp;emsp;&amp;emsp;最近在做 ssl3.0 的数据解密，把其中重要的知识点记录一下，以免忘记。
+0x01 密钥计算&amp;emsp;&amp;emsp;整个过程中会用到三部分密钥：预主密钥（Pre-master）、主密钥（Master secret）和密钥材料（key material）。
+1. 预主密钥&amp;emsp;&amp;emsp;客户端产生，利用服务端的公钥加密，传送给服务端。
+2. 主密钥&amp;emsp;&amp;em">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Svchost 详细解析">
-<meta property="og:url" content="http://tengpapa.com/2018/04/02/Windows编程/svchost/index.html">
+<meta property="og:title" content="SSL/TLS 协议解析">
+<meta property="og:url" content="http://tengpapa.com/2018/07/24/密码学/SSL-TLS协议解析/index.html">
 <meta property="og:site_name" content="芳华明天">
-<meta property="og:description" content="认识 svchostSvchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。
-svchost.exe 可以几个同时存在，">
-<meta property="og:image" content="http://wx1.sinaimg.cn/mw690/4369aa0aly1fpyq3bqe8fj20d40aj0ss.jpg">
-<meta property="og:updated_time" content="2018-04-02T15:27:35.250Z">
+<meta property="og:description" content="&amp;emsp;&amp;emsp;最近在做 ssl3.0 的数据解密，把其中重要的知识点记录一下，以免忘记。
+0x01 密钥计算&amp;emsp;&amp;emsp;整个过程中会用到三部分密钥：预主密钥（Pre-master）、主密钥（Master secret）和密钥材料（key material）。
+1. 预主密钥&amp;emsp;&amp;emsp;客户端产生，利用服务端的公钥加密，传送给服务端。
+2. 主密钥&amp;emsp;&amp;em">
+<meta property="og:image" content="http://wx3.sinaimg.cn/mw690/4369aa0aly1ftlanu5xmwj20jt0ekdgz.jpg">
+<meta property="og:updated_time" content="2018-07-24T14:10:58.137Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Svchost 详细解析">
-<meta name="twitter:description" content="认识 svchostSvchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。
-svchost.exe 可以几个同时存在，">
-<meta name="twitter:image" content="http://wx1.sinaimg.cn/mw690/4369aa0aly1fpyq3bqe8fj20d40aj0ss.jpg">
+<meta name="twitter:title" content="SSL/TLS 协议解析">
+<meta name="twitter:description" content="&amp;emsp;&amp;emsp;最近在做 ssl3.0 的数据解密，把其中重要的知识点记录一下，以免忘记。
+0x01 密钥计算&amp;emsp;&amp;emsp;整个过程中会用到三部分密钥：预主密钥（Pre-master）、主密钥（Master secret）和密钥材料（key material）。
+1. 预主密钥&amp;emsp;&amp;emsp;客户端产生，利用服务端的公钥加密，传送给服务端。
+2. 主密钥&amp;emsp;&amp;em">
+<meta name="twitter:image" content="http://wx3.sinaimg.cn/mw690/4369aa0aly1ftlanu5xmwj20jt0ekdgz.jpg">
 
 
 
@@ -129,13 +135,13 @@ svchost.exe 可以几个同时存在，">
 
 
 
-  <link rel="canonical" href="http://tengpapa.com/2018/04/02/Windows编程/svchost/"/>
+  <link rel="canonical" href="http://tengpapa.com/2018/07/24/密码学/SSL-TLS协议解析/"/>
 
 
 
 
 
-  <title> Svchost 详细解析 | 芳华明天 </title>
+  <title> SSL/TLS 协议解析 | 芳华明天 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -274,7 +280,7 @@ svchost.exe 可以几个同时存在，">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2018/04/02/Windows编程/svchost/">
+    <link itemprop="mainEntityOfPage" href="http://tengpapa.com/2018/07/24/密码学/SSL-TLS协议解析/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="tengpapa">
@@ -295,7 +301,7 @@ svchost.exe 可以几个同时存在，">
             
             
               
-                Svchost 详细解析
+                SSL/TLS 协议解析
               
             
           </h1>
@@ -310,8 +316,8 @@ svchost.exe 可以几个同时存在，">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-02T22:30:00+08:00">
-                2018-04-02
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-07-24T22:00:09+08:00">
+                2018-07-24
               </time>
             
 
@@ -333,8 +339,8 @@ svchost.exe 可以几个同时存在，">
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Windows编程/" itemprop="url" rel="index">
-                    <span itemprop="name">Windows编程</span>
+                  <a href="/categories/协议/" itemprop="url" rel="index">
+                    <span itemprop="name">协议</span>
                   </a>
                 </span>
 
@@ -368,12 +374,20 @@ svchost.exe 可以几个同时存在，">
       
 
       
-        <h4 id="认识-svchost"><a href="#认识-svchost" class="headerlink" title="认识 svchost"></a>认识 svchost</h4><p>Svchost.exe (Service Host, or SvcHost)是属于 Microsoft Windows 操作系统的系统进程，用于处理从 DLL 执行的进程（据作者所知，svchost 应该是唯一可以启动 dll 的 Windows 自带服务，木马程序的最爱）。Svchost 本身可加载多个系统服务，属于共享服务的载体。</p>
-<p>svchost.exe 可以几个同时存在，windows 2000 一般有 2 个 svchost 进程，一个是 RPCSS（Remote Procedure Call）服务进程，另外一个则是由很多服务共享的一个 svchost.exe。而在 windows XP 中，则一般有 4 个以上的 svchost.exe 服务进程，在 XP 之后的系统中则更多（WIN7 一般是 6 个，但所有系统中数目都不是绝对的，有时候多一点少一点也是正常现象），可以看出把更多的系统内置服务以共享进程方式由 svchost 启动是微软的一个趋势。这样做在一定程度上减少了系统资源的消耗，不过也带来一定的不稳定因素，因为任何一个共享进程的服务因为错误退出进程就会导致整个进程中的所有服务都退出。该进程无法用任务管理器终止，如果用工具强制终止会立刻得到提示并自动关机。</p>
-<p>为了给大家一个感性的认识，我们以<code>Remote Procedure Call(RPC)</code>服务为例，查看该服务的属性，可看到该服务的可执行文件路径为<code>“c:\windows\system32\svchost.exe -k rpcss -p”</code>（这是个 Win10 下的）。</p>
-<div align="center"><br><img src="http://wx1.sinaimg.cn/mw690/4369aa0aly1fpyq3bqe8fj20d40aj0ss.jpg" alt="tuopu"><br></div>
+        <p>&emsp;&emsp;最近在做 ssl3.0 的数据解密，把其中重要的知识点记录一下，以免忘记。</p>
+<h3 id="0x01-密钥计算"><a href="#0x01-密钥计算" class="headerlink" title="0x01 密钥计算"></a>0x01 密钥计算</h3><p>&emsp;&emsp;整个过程中会用到三部分密钥：预主密钥（Pre-master）、主密钥（Master secret）和密钥材料（key material）。</p>
+<h6 id="1-预主密钥"><a href="#1-预主密钥" class="headerlink" title="1. 预主密钥"></a>1. 预主密钥</h6><p>&emsp;&emsp;客户端产生，利用服务端的公钥加密，传送给服务端。</p>
+<h6 id="2-主密钥"><a href="#2-主密钥" class="headerlink" title="2. 主密钥"></a>2. 主密钥</h6><p>&emsp;&emsp;主密钥共 48 字节，需双方独立计算，计算方法为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">主密钥 = MD5(ps || SHA(  &apos;A&apos; || ps || c_r || s_r))</div><div class="line">     || MD5(ps || SHA( &apos;BB&apos; || ps || c_r || s_r))</div><div class="line">     || MD5(ps || SHA(&apos;CCC&apos; || ps || c_r || s_r))</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;其中，ps 为预主密钥，c_r 为客户端产生的随机数，s_r 为服务端产生的随机数。<strong>需要注意：c_r 有可能只有 16 字节，计算时需要在前面补零，补成 32 字节</strong>。</p>
+<h6 id="3-密钥材料"><a href="#3-密钥材料" class="headerlink" title="3. 密钥材料"></a>3. 密钥材料</h6><p>&emsp;&emsp;密钥材料按需生产，计算方法为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">密钥材料 = MD5(主密钥 || SHA(  &apos;A&apos; || 主密钥 || c_r || s_r))</div><div class="line">       || MD5(主密钥 || SHA( &apos;BB&apos; || 主密钥 || c_r || s_r))</div><div class="line">       || MD5(主密钥 || SHA(&apos;CCC&apos; || 主密钥 || c_r || s_r))</div><div class="line">        ......</div></pre></td></tr></table></figure></p>
+<p>&emsp;&emsp;从密钥材料上逐一截取客户端 MAC 密钥，服务端 MAC 密钥，客户端加密密钥（用于对称算法，也就是对加密的握手信息以及 Application Data 进行解密），服务端加密密钥，服务端初始向量，客户端初始向量。可见，双向通信的不同方向使用的密钥不同，破解通信至少需要破解两次。</p>
+<h6 id="4-密钥变换"><a href="#4-密钥变换" class="headerlink" title="4. 密钥变换"></a>4. 密钥变换</h6><p>&emsp;&emsp;一次完整会话中（服务器发送一次证书），可以中间进行密码方案的改变，但一般情况下，只是需要重新生成密钥材料，所选的密码方案不改变（目前还没遇到改变的情况）。此时，尽管通信双方重新交换了随机数，但主密钥不需改变，但密钥材料需根据主密钥和双方随机数进行重新计算。此外，解密双方 Application Data 时需注意，如果使用流密码，<strong>一定不要忘记先解密握手信息</strong>，否则流密码的解密起点会对不上，造成解密失败。</p>
+<h3 id="0x02-Wireshark-解-SSL-TLS-协议数据"><a href="#0x02-Wireshark-解-SSL-TLS-协议数据" class="headerlink" title="0x02 Wireshark 解 SSL/TLS 协议数据"></a>0x02 Wireshark 解 SSL/TLS 协议数据</h3><p>&emsp;&emsp;在知道服务端 RSA 私钥或客户端预主密钥的情况下，Wireshark 可直接解 SSL/TLS 协议的数据。</p>
+<p>&emsp;&emsp;具体方法为：首选项 -&gt; Protocols -&gt; SSL。以知道预主密钥为例，在预主密钥文件中输入 <strong><code>RSA  &lt;公钥加密的预主密钥的前8字节&gt;  &lt;预主密钥&gt;</code></strong>，共三部分内容，后两部分需写成 16 进制字符串。</p>
+<div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1ftlanu5xmwj20jt0ekdgz.jpg" alt="ssh pro"><br></div>
 
-<h4 id="Svchost-原理"><a href="#Svchost-原理" class="headerlink" title="Svchost 原理"></a>Svchost 原理</h4>
+<h3 id="0x03-获取协议数据"><a href="#0x03-获取协议数据" class="headerlink" title="0x03 获取协议数据"></a>0x03 获取协议数据</h3><p>&emsp;&emsp;研究 SSL/TLS 协议，获取能用于解密的数据很重要。一般情况下，本机的预主密钥不容易获取，可搭建服务器，利用证书的私钥解密出预主密钥。Openssl 命令行下的 s_server 和 s_client 可提供模拟的服务端和客户端，用于 ssl 数据的测试，具体使用方法，以后会单独进行讲解，有一点需记录一下：使用 s_client 连接服务器后，可输入“GET/”获取一帧网页数据。</p>
+
       
     </div>
 
@@ -402,11 +416,13 @@ svchost.exe 可以几个同时存在，">
       
         <div class="post-tags">
           
-            <a href="/tags/Svchost/" rel="tag"># Svchost</a>
+            <a href="/tags/协议/" rel="tag"># 协议</a>
           
-            <a href="/tags/服务/" rel="tag"># 服务</a>
+            <a href="/tags/信息安全/" rel="tag"># 信息安全</a>
           
-            <a href="/tags/编程/" rel="tag"># 编程</a>
+            <a href="/tags/SSL/" rel="tag"># SSL</a>
+          
+            <a href="/tags/TLS/" rel="tag"># TLS</a>
           
         </div>
       
@@ -419,8 +435,8 @@ svchost.exe 可以几个同时存在，">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2018/04/01/博客/重装系统后重新配置GitHub/" rel="next" title="重装系统后，重新配置GitHub上的博客">
-                <i class="fa fa-chevron-left"></i> 重装系统后，重新配置GitHub上的博客
+              <a href="/2018/07/01/Linux/SSH资料整理/" rel="next" title="SSH 详细解析">
+                <i class="fa fa-chevron-left"></i> SSH 详细解析
               </a>
             
           </div>
@@ -428,10 +444,6 @@ svchost.exe 可以几个同时存在，">
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2018/07/01/Linux/SSH资料整理/" rel="prev" title="SSH 详细解析">
-                SSH 详细解析 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -560,7 +572,7 @@ svchost.exe 可以几个同时存在，">
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#认识-svchost"><span class="nav-number">1.</span> <span class="nav-text">认识 svchost</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Svchost-原理"><span class="nav-number">2.</span> <span class="nav-text">Svchost 原理</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#0x01-密钥计算"><span class="nav-number">1.</span> <span class="nav-text">0x01 密钥计算</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#1-预主密钥"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">1. 预主密钥</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#2-主密钥"><span class="nav-number">1.0.0.2.</span> <span class="nav-text">2. 主密钥</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#3-密钥材料"><span class="nav-number">1.0.0.3.</span> <span class="nav-text">3. 密钥材料</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#4-密钥变换"><span class="nav-number">1.0.0.4.</span> <span class="nav-text">4. 密钥变换</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x02-Wireshark-解-SSL-TLS-协议数据"><span class="nav-number">2.</span> <span class="nav-text">0x02 Wireshark 解 SSL/TLS 协议数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#0x03-获取协议数据"><span class="nav-number">3.</span> <span class="nav-text">0x03 获取协议数据</span></a></li></ol></div>
             
 
           </div>

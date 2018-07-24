@@ -87,33 +87,21 @@
 
 
 
-<meta name="description" content="一. 实验网络的搭建1. 网络拓扑
-
-2. 搭建环境使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。
-
-二. 实验网络的配置1. 配置 PC11ip 192.168.1.2 255.255.255.0 192.168.1.1
-2. 配置 R112345678R1# configure terminal">
+<meta name="description" content="写在开头的话：GNS3 只能在一台计算机上，在自身软件内部模拟网络设备和电脑，然后在网络拓扑图的相应位置右键打开 Wireshark 进行抓包分析。需要说明一点，GNS3 无法单独将一台计算机模拟成真实网络中一台独立的网络设备，例如，如果想搭建真实的 ipsec 服务器，GNS3 搭载 cisco 镜像，无法实现该功能，可以采用虚拟机安装 strongswan 来搭建 ipsec 服务器。 
+一.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IPSEC 学习（一）---使用 GNS3 搭建 IPSEC 模拟环境">
 <meta property="og:url" content="http://tengpapa.com/2017/09/23/密码学/使用GNS3搭建IPSEC模拟环境/index.html">
 <meta property="og:site_name" content="芳华明天">
-<meta property="og:description" content="一. 实验网络的搭建1. 网络拓扑
-
-2. 搭建环境使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。
-
-二. 实验网络的配置1. 配置 PC11ip 192.168.1.2 255.255.255.0 192.168.1.1
-2. 配置 R112345678R1# configure terminal">
+<meta property="og:description" content="写在开头的话：GNS3 只能在一台计算机上，在自身软件内部模拟网络设备和电脑，然后在网络拓扑图的相应位置右键打开 Wireshark 进行抓包分析。需要说明一点，GNS3 无法单独将一台计算机模拟成真实网络中一台独立的网络设备，例如，如果想搭建真实的 ipsec 服务器，GNS3 搭载 cisco 镜像，无法实现该功能，可以采用虚拟机安装 strongswan 来搭建 ipsec 服务器。 
+一.">
 <meta property="og:image" content="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg">
 <meta property="og:image" content="http://wx4.sinaimg.cn/mw690/4369aa0aly1fjtu1h9w1fj20n509e40m.jpg">
-<meta property="og:updated_time" content="2017-09-23T14:48:29.611Z">
+<meta property="og:updated_time" content="2018-07-24T14:20:50.490Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="IPSEC 学习（一）---使用 GNS3 搭建 IPSEC 模拟环境">
-<meta name="twitter:description" content="一. 实验网络的搭建1. 网络拓扑
-
-2. 搭建环境使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。
-
-二. 实验网络的配置1. 配置 PC11ip 192.168.1.2 255.255.255.0 192.168.1.1
-2. 配置 R112345678R1# configure terminal">
+<meta name="twitter:description" content="写在开头的话：GNS3 只能在一台计算机上，在自身软件内部模拟网络设备和电脑，然后在网络拓扑图的相应位置右键打开 Wireshark 进行抓包分析。需要说明一点，GNS3 无法单独将一台计算机模拟成真实网络中一台独立的网络设备，例如，如果想搭建真实的 ipsec 服务器，GNS3 搭载 cisco 镜像，无法实现该功能，可以采用虚拟机安装 strongswan 来搭建 ipsec 服务器。 
+一.">
 <meta name="twitter:image" content="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg">
 
 
@@ -381,7 +369,8 @@
       
 
       
-        <h4 id="一-实验网络的搭建"><a href="#一-实验网络的搭建" class="headerlink" title="一. 实验网络的搭建"></a>一. 实验网络的搭建</h4><h6 id="1-网络拓扑"><a href="#1-网络拓扑" class="headerlink" title="1. 网络拓扑"></a>1. 网络拓扑</h6><div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg" alt="tuopu"><br></div>
+        <p>写在开头的话：GNS3 只能在一台计算机上，在自身软件内部模拟网络设备和电脑，然后在网络拓扑图的相应位置右键打开 Wireshark 进行抓包分析。需要说明一点，GNS3 无法单独将一台计算机模拟成真实网络中一台独立的网络设备，例如，如果想搭建真实的 ipsec 服务器，GNS3 搭载 cisco 镜像，无法实现该功能，可以采用虚拟机安装 strongswan 来搭建 ipsec 服务器。 </p>
+<h4 id="一-实验网络的搭建"><a href="#一-实验网络的搭建" class="headerlink" title="一. 实验网络的搭建"></a>一. 实验网络的搭建</h4><h6 id="1-网络拓扑"><a href="#1-网络拓扑" class="headerlink" title="1. 网络拓扑"></a>1. 网络拓扑</h6><div align="center"><br><img src="http://wx3.sinaimg.cn/mw690/4369aa0aly1fjtub0wwuoj23vf19utiy.jpg" alt="tuopu"><br></div>
 
 <h6 id="2-搭建环境"><a href="#2-搭建环境" class="headerlink" title="2. 搭建环境"></a>2. 搭建环境</h6><p>使用 GNS3 来搭建模拟环境，模拟的路由器均为 cisco 2691，使用 wireshark 在 R1 的 eth2 口进行抓包。</p>
 <hr>
@@ -527,7 +516,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -549,7 +538,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">30</span>
+                <span class="site-state-item-count">32</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
